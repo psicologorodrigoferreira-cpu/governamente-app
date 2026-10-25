@@ -44,6 +44,12 @@
     ],
     "experiments": {
       "typedRoutes": false
+    },
+    "owner": "rodrigoferreirapsi",
+    "extra": {
+      "eas": {
+        "projectId": "d4420e44-1cd5-4a44-ba9c-a89b6da9dd0d"
+      }
     }
   }
 }
