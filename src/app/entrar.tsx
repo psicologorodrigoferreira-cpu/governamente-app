@@ -64,6 +64,9 @@ export default function Entrar() {
             <Text style={s.tituloCaixa}>
               {modo === 'cadastrar' ? 'Comece sua travessia' : modo === 'entrar' ? 'Bem-vindo de volta' : 'Criar nova senha'}
             </Text>
+            {modo === 'cadastrar' && (
+              <Text style={s.gratis}>7 dias grátis, sem cartão. Depois, escolha o plano mensal ou anual.</Text>
+            )}
             {modoDemo && (
               <Text style={s.demo}>Modo demonstração: seus dados ficam só neste aparelho.</Text>
             )}
@@ -99,7 +102,7 @@ export default function Entrar() {
                 <View style={[s.caixinha, aceite && s.caixinhaOn]}>{aceite && <Text style={s.check}>✓</Text>}</View>
                 <Text style={s.aceiteTexto}>
                   Li e aceito os{' '}
-                  <Text style={s.link} onPress={() => Linking.openURL('https://governamente.com.br/app/termos')}>
+                  <Text style={s.link} onPress={() => Linking.openURL('https://app.governamente.com.br/termos.html')}>
                     termos de uso
                   </Text>{' '}
                   e a{' '}
@@ -113,7 +116,7 @@ export default function Entrar() {
             {!!erro && <Text style={s.erro} accessibilityLiveRegion="polite">{erro}</Text>}
             {!!aviso && <Text style={s.aviso} accessibilityLiveRegion="polite">{aviso}</Text>}
             <Botao
-              titulo={modo === 'cadastrar' ? 'Criar minha conta' : modo === 'entrar' ? 'Entrar' : 'Enviar link'}
+              titulo={modo === 'cadastrar' ? 'Começar meus 7 dias grátis' : modo === 'entrar' ? 'Entrar' : 'Enviar link'}
               onPress={enviar}
               carregando={carregando}
             />
@@ -138,6 +141,7 @@ const s = StyleSheet.create({
   frase: { fontFamily: fontes.tituloItalico, color: cores.areia, fontSize: 17, textAlign: 'center' },
   caixa: { backgroundColor: cores.areia, borderRadius: raio.l, padding: espaco.l, gap: espaco.xs },
   tituloCaixa: { fontFamily: fontes.titulo, fontSize: 24, color: cores.petroleo, marginBottom: espaco.m },
+  gratis: { fontFamily: fontes.textoMedio, fontSize: 14, color: cores.salviaEscura, marginTop: -8, marginBottom: espaco.m },
   demo: { fontFamily: fontes.texto, fontSize: 13, color: cores.ambarTerra, marginBottom: espaco.m },
   erro: { fontFamily: fontes.textoMedio, color: cores.alerta, marginBottom: espaco.s },
   aviso: { fontFamily: fontes.textoMedio, color: cores.salviaEscura, marginBottom: espaco.s },

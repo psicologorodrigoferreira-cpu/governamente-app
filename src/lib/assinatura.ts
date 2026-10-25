@@ -7,7 +7,7 @@ import Purchases, { PurchasesPackage } from 'react-native-purchases';
 import { supabase } from './supabase';
 
 export const ENTITLEMENT = 'acesso'; // nome do "Entitlement" criado no RevenueCat
-export const PRECO_REFERENCIA = 'R$ 29,90/mês';
+export const PRECO_REFERENCIA = { mensal: 'R$ 29,90', anual: 'R$ 299,00' };
 
 const chaveLoja =
   Platform.OS === 'ios'
@@ -49,28 +49,58 @@ async function acessoPelaLoja(): Promise<boolean> {
   }
 }
 
-/** Acesso liberado no servidor: Hubla (site), Tripulantes da Mesa, pacientes do Plano. */
-async function acessoPeloServidor(): Promise<{ ativo: boolean; origem?: string }> {
+export const DIAS_TESTE = 7;
+
+/**
+ * Acesso:
+ * - origem 'teste': período grátis de 7 dias após o cadastro (tudo liberado, menos as aulas).
+ *   Se `ativo` for false com origem 'teste', o período grátis terminou.
+ * - demais origens: assinatura (loja ou site) ou inclusão pela Mesa / Plano / cortesia.
+ */
+export type Acesso = {
+  ativo: boolean;
+  origem?: 'teste' | 'loja' | 'hubla' | 'mesa' | 'plano' | 'cortesia' | 'demonstração' | string;
+  expiraEm?: string;
+};
+
+/** O que a pessoa pode usar: no teste grátis, as aulas ficam bloqueadas. */
+export const ehAssinante = (a: Acesso) => a.ativo && a.origem !== 'teste';
+export const podeVerAulas = ehAssinante;
+
+export function diasRestantes(a: Acesso): number {
+  if (!a.expiraEm) return 0;
+  return Math.max(0, Math.ceil((new Date(a.expiraEm).getTime() - Date.now()) / 864e5));
+}
+
+/** Acesso no servidor: Hubla (site), Mesa, Plano, cortesia ou o teste grátis. */
+async function acessoPeloServidor(): Promise<Acesso> {
   if (!supabase) return { ativo: false };
   const { data, error } = await supabase.rpc('meu_acesso');
   if (error || !data) return { ativo: false };
   const linha = Array.isArray(data) ? data[0] : data;
-  return { ativo: !!linha?.ativo, origem: linha?.origem ?? undefined };
+  if (!linha) return { ativo: false };
+  return { ativo: !!linha.ativo, origem: linha.origem ?? undefined, expiraEm: linha.expira_em ?? undefined };
 }
-
-export type Acesso = { ativo: boolean; origem?: 'loja' | 'hubla' | 'mesa' | 'plano' | 'cortesia' | string };
 
 export async function verificarAcesso(): Promise<Acesso> {
   const servidor = await acessoPeloServidor();
-  if (servidor.ativo) return servidor;
+  // Assinatura paga ou inclusão vale mais que o teste grátis.
+  if (servidor.ativo && servidor.origem !== 'teste') return servidor;
   if (await acessoPelaLoja()) return { ativo: true, origem: 'loja' };
-  return { ativo: false };
+  return servidor; // teste grátis (ativo ou encerrado) ou nada
 }
 
-export async function pacotesDisponiveis(): Promise<PurchasesPackage[]> {
+export type Plano = { pacote: PurchasesPackage; tipo: 'mensal' | 'anual' };
+
+/** Planos da offering atual do RevenueCat: mensal e anual. */
+export async function planosDisponiveis(): Promise<Plano[]> {
   if (!LOJA_DISPONIVEL) return [];
   const ofertas = await Purchases.getOfferings();
-  return ofertas.current?.availablePackages ?? [];
+  const atual = ofertas.current;
+  const lista: Plano[] = [];
+  if (atual?.annual) lista.push({ pacote: atual.annual, tipo: 'anual' });
+  if (atual?.monthly) lista.push({ pacote: atual.monthly, tipo: 'mensal' });
+  return lista;
 }
 
 export async function assinar(pacote: PurchasesPackage): Promise<boolean> {

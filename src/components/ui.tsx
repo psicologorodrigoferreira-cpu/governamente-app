@@ -75,7 +75,9 @@ export function Botao({
   carregando,
   desativado,
   style,
+  corTexto,
 }: {
+  corTexto?: string;
   titulo: string;
   onPress: () => void;
   variante?: 'principal' | 'secundario' | 'texto';
@@ -106,6 +108,7 @@ export function Botao({
             s.botaoRotulo,
             variante !== 'principal' && { color: cores.petroleo },
             variante === 'texto' && { textDecorationLine: 'underline' },
+            !!corTexto && { color: corTexto },
           ]}
         >
           {titulo}

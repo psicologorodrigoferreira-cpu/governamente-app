@@ -3,7 +3,7 @@ import { Alert, Linking, Platform } from 'react-native';
 import { router } from 'expo-router';
 import { Botao, Cartao, Legenda, Subtitulo, Tela, Texto, Titulo } from '@/components/ui';
 import { useAuth } from '@/lib/auth';
-import { linkGerenciarAssinatura, LOJA_DISPONIVEL, restaurarCompras } from '@/lib/assinatura';
+import { diasRestantes, linkGerenciarAssinatura, LOJA_DISPONIVEL, restaurarCompras } from '@/lib/assinatura';
 import { cores } from '@/lib/theme';
 
 const ORIGEM: Record<string, string> = {
@@ -62,7 +62,16 @@ export default function Conta() {
 
       <Cartao>
         <Subtitulo>Seu acesso</Subtitulo>
-        <Texto>{acesso.ativo ? ORIGEM[acesso.origem ?? ''] ?? 'Ativo' : 'Sem assinatura ativa'}</Texto>
+        <Texto>
+          {acesso.origem === 'teste'
+            ? acesso.ativo
+              ? `Teste grátis: ${diasRestantes(acesso)} dia(s) restante(s). As aulas são liberadas com a assinatura.`
+              : 'Seu teste grátis terminou.'
+            : acesso.ativo
+              ? ORIGEM[acesso.origem ?? ''] ?? 'Ativo'
+              : 'Sem assinatura ativa'}
+        </Texto>
+        {acesso.origem === 'teste' && <Botao titulo="Ver planos: mensal ou anual" onPress={() => router.push('/assinar')} />}
         {acesso.origem === 'loja' && (
           <Botao variante="secundario" titulo="Gerenciar assinatura" onPress={() => Linking.openURL(linkGerenciarAssinatura())} />
         )}

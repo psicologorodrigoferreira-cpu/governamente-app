@@ -44,6 +44,7 @@ export default function RootLayout() {
           <Stack.Screen name="assinar" options={{ title: 'Assinatura', presentation: 'modal' }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="estacao/[id]" options={{ title: 'Trilha' }} />
+          <Stack.Screen name="aula/[id]" options={{ title: 'Aula' }} />
           <Stack.Screen name="diario-novo" options={{ title: 'Novo registro', presentation: 'modal' }} />
           <Stack.Screen name="checkin" options={{ title: 'Check-in da semana', presentation: 'modal' }} />
           <Stack.Screen name="roda" options={{ title: 'Roda das Emoções' }} />

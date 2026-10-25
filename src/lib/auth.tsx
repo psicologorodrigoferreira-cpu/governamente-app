@@ -2,7 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Session } from '@supabase/supabase-js';
 import { MODO_DEMO, supabase } from './supabase';
-import { Acesso, iniciarLoja, sairLoja, verificarAcesso } from './assinatura';
+import { Acesso, DIAS_TESTE, iniciarLoja, sairLoja, verificarAcesso } from './assinatura';
 import { limparDadosLocais } from './dados';
 
 type Ctx = {
@@ -18,10 +18,28 @@ type Ctx = {
   sair: () => Promise<void>;
   excluirConta: () => Promise<void>;
   atualizarAcesso: () => Promise<void>;
+  /** Só no modo demonstração: simula uma assinatura para testar o fluxo. */
+  simularAssinatura: () => Promise<void>;
 };
 
 const AuthCtx = createContext<Ctx | null>(null);
 const DEMO_KEY = 'gm:demo-usuario';
+const DEMO_INICIO = 'gm:demo-inicio-teste';
+const DEMO_ASSINANTE = 'gm:demo-assinante';
+
+/** Modo demonstração: imita o teste grátis de 7 dias com dados guardados no aparelho. */
+async function acessoDemo(): Promise<Acesso> {
+  if ((await AsyncStorage.getItem(DEMO_ASSINANTE).catch(() => null)) === '1') {
+    return { ativo: true, origem: 'demonstração' };
+  }
+  let inicio = await AsyncStorage.getItem(DEMO_INICIO).catch(() => null);
+  if (!inicio) {
+    inicio = new Date().toISOString();
+    await AsyncStorage.setItem(DEMO_INICIO, inicio).catch(() => {});
+  }
+  const fim = new Date(new Date(inicio).getTime() + DIAS_TESTE * 864e5);
+  return { ativo: fim.getTime() > Date.now(), origem: 'teste', expiraEm: fim.toISOString() };
+}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [carregando, setCarregando] = useState(true);
@@ -31,7 +49,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const atualizarAcesso = useCallback(async () => {
     if (MODO_DEMO) {
-      setAcesso({ ativo: true, origem: 'demonstração' });
+      setAcesso(await acessoDemo());
       return;
     }
     setAcesso(await verificarAcesso());
@@ -58,14 +76,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       setCarregando(false);
     })();
-    const sub = supabase?.auth.onAuthStateChange(async (_evento, s) => {
+    const sub = supabase?.auth.onAuthStateChange((_evento, s) => {
       setSessao(s);
-      if (s) {
-        await iniciarLoja(s.user.id);
-        await atualizarAcesso();
-      } else {
-        setAcesso({ ativo: false });
-      }
+      // Fora do callback: chamar o Supabase aqui dentro pode travar o login.
+      setTimeout(async () => {
+        if (s) {
+          await iniciarLoja(s.user.id);
+          await atualizarAcesso();
+        } else {
+          setAcesso({ ativo: false });
+        }
+      }, 0);
     });
     return () => {
       ativo = false;
@@ -78,17 +99,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const u = { nome: email.split('@')[0], email };
       await AsyncStorage.setItem(DEMO_KEY, JSON.stringify(u));
       setDemo(u);
+      await atualizarAcesso();
       return;
     }
     const { error } = await supabase!.auth.signInWithPassword({ email: email.trim(), password: senha });
     if (error) throw new Error(traduzirErro(error.message));
-  }, []);
+  }, [atualizarAcesso]);
 
   const cadastrar = useCallback(async (nome: string, email: string, senha: string) => {
     if (MODO_DEMO) {
       const u = { nome, email };
       await AsyncStorage.setItem(DEMO_KEY, JSON.stringify(u));
       setDemo(u);
+      await atualizarAcesso();
       return { precisaConfirmar: false };
     }
     const { data, error } = await supabase!.auth.signUp({
@@ -98,7 +121,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
     if (error) throw new Error(traduzirErro(error.message));
     return { precisaConfirmar: !data.session };
-  }, []);
+  }, [atualizarAcesso]);
 
   const recuperarSenha = useCallback(async (email: string) => {
     if (MODO_DEMO) return;
@@ -130,6 +153,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await supabase!.auth.signOut();
   }, []);
 
+  const simularAssinatura = useCallback(async () => {
+    if (!MODO_DEMO) return;
+    await AsyncStorage.setItem(DEMO_ASSINANTE, '1');
+    await atualizarAcesso();
+  }, [atualizarAcesso]);
+
   const valor = useMemo<Ctx>(() => {
     const meta = (sessao?.user.user_metadata ?? {}) as { nome?: string };
     return {
@@ -145,8 +174,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       sair,
       excluirConta,
       atualizarAcesso,
+      simularAssinatura,
     };
-  }, [carregando, sessao, demo, acesso, entrar, cadastrar, recuperarSenha, sair, excluirConta, atualizarAcesso]);
+  }, [carregando, sessao, demo, acesso, entrar, cadastrar, recuperarSenha, sair, excluirConta, atualizarAcesso, simularAssinatura]);
 
   return <AuthCtx.Provider value={valor}>{children}</AuthCtx.Provider>;
 }

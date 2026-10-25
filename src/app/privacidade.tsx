@@ -20,7 +20,7 @@ export default function Privacidade() {
       <Botao
         variante="secundario"
         titulo="Política de privacidade completa"
-        onPress={() => Linking.openURL('https://governamente.com.br/app/privacidade')}
+        onPress={() => Linking.openURL('https://app.governamente.com.br/privacidade.html')}
       />
     </Tela>
   );

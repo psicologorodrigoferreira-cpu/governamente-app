@@ -33,17 +33,13 @@ export const CAMINHOS: Item[] = [
     selo: 'Grátis',
   },
   {
+    titulo: 'Canal GovernaMente no YouTube',
+    descricao: 'Lives e conteúdos abertos sobre autorregulação emocional.',
+    url: 'https://www.youtube.com/@governamenteoficial',
+  },
+  {
     titulo: 'Canal GovernaMente no WhatsApp',
     descricao: 'Conteúdo curto toda semana.',
     url: 'https://whatsapp.com/channel/0029VbDztxs4SpkMJYgy2m2q',
-  },
-];
-
-/** Aulas em vídeo. Preencha com os links do YouTube (@governamenteoficial). */
-export const AULAS: Item[] = [
-  {
-    titulo: 'Canal GovernaMente no YouTube',
-    descricao: 'Lives e aulas gravadas sobre autorregulação emocional.',
-    url: 'https://www.youtube.com/@governamenteoficial',
   },
 ];

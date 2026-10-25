@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { Botao, Cartao, Destaque, Legenda, Logo, Progresso, Subtitulo, Tela, Texto, Titulo } from '@/components/ui';
 import { useAuth } from '@/lib/auth';
+import { diasRestantes } from '@/lib/assinatura';
 import { checkinFeitoNaSemana, listarCheckins, listarConcluidas, listarDiario } from '@/lib/dados';
 import { PILARES, TRILHA } from '@/content/trilha';
 import { cores, espaco, fontes } from '@/lib/theme';
@@ -13,7 +14,9 @@ function saudacao() {
 }
 
 export default function Home() {
-  const { nome } = useAuth();
+  const { nome, acesso } = useAuth();
+  const emTeste = acesso.origem === 'teste' && acesso.ativo;
+  const dias = diasRestantes(acesso);
   const [concluidas, setConcluidas] = useState<string[]>([]);
   const [checkinOk, setCheckinOk] = useState(true);
   const [registrosSemana, setRegistrosSemana] = useState(0);
@@ -50,6 +53,17 @@ export default function Home() {
         {primeiroNome ? `, ${primeiroNome}` : ''}.{'\n'}
         <Destaque>Qual é o passo possível hoje?</Destaque>
       </Titulo>
+
+      {emTeste && (
+        <Cartao onPress={() => router.push('/assinar')} rotulo="Ver planos de assinatura" style={s.teste}>
+          <Legenda style={{ color: cores.ambarTerra }}>TESTE GRÁTIS</Legenda>
+          <Text style={s.testeTitulo}>
+            {dias <= 1 ? 'Último dia do seu teste grátis' : `Restam ${dias} dias do seu teste grátis`}
+          </Text>
+          <Text style={s.testeTexto}>Tudo liberado, menos as aulas. Assine para manter o acesso e liberar as aulas.</Text>
+          <Text style={s.testeLink}>Ver planos →</Text>
+        </Cartao>
+      )}
 
       {!checkinOk && (
         <Cartao escuro onPress={() => router.push('/checkin')} rotulo="Fazer o check-in da semana">
@@ -112,5 +126,9 @@ const s = StyleSheet.create({
   ponto: { width: 10, height: 10, borderRadius: 5, backgroundColor: cores.ambar },
   atalhoTitulo: { fontFamily: fontes.textoForte, fontSize: 15, color: cores.petroleo },
   atalhoTexto: { fontFamily: fontes.texto, fontSize: 13, color: cores.grafiteSuave },
+  teste: { borderColor: cores.ambar, backgroundColor: '#FBF1E1' },
+  testeTitulo: { fontFamily: fontes.titulo, fontSize: 19, color: cores.petroleo },
+  testeTexto: { fontFamily: fontes.texto, fontSize: 14, color: cores.grafite, lineHeight: 20 },
+  testeLink: { fontFamily: fontes.textoForte, fontSize: 14, color: cores.ambarTerra },
   citacao: { fontFamily: fontes.tituloItalico, fontSize: 19, color: cores.petroleo, lineHeight: 26 },
 });
