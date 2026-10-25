@@ -1,0 +1,6 @@
+[functions.hubla-webhook]
+# A Hubla não envia login do Supabase; a função confere o x-hubla-token.
+verify_jwt = false
+
+[functions.excluir-conta]
+verify_jwt = true
