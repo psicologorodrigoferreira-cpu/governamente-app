@@ -30,7 +30,7 @@ Depois, escreva para o Claude: **"adicionei"**. Ele publica o app em app.governa
 Abra app.governamente.com.br e crie a conta com **psicologorodrigoferreira@gmail.com**. Confirme pelo link do e-mail. Em **Conta**, aparece o **Painel do Rodrigo**: números, aulas, códigos, agenda e Mesa.
 
 No painel, já deixe pronto:
-- **Agenda:** horário das lives (ficou 20h, terça a sexta, ainda **desativada** até você confirmar), link do Meet do Grupo da Generosidade e link do Meet da Mesa.
+- **Agenda:** os horários já estão certos (lives terça a sexta às 12h30; Grupo da Generosidade às quartas, 19h, até 25/11; Mesa às quartas, 19h, a partir de 01/12). Falta só colar os links: do YouTube/Instagram para as lives, e do Meet para o Grupo e para a Mesa.
 - **Mesa:** confira a data de início da Travessia 01 (01/12/2026) e, se quiser, o tema de cada semana.
 
 ## 5. Funções do servidor (Supabase → Edge Functions)

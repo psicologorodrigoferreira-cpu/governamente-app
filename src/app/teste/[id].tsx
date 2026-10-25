@@ -197,6 +197,17 @@ function VerResultado({ t, r, onRefazer }: { t: NonNullable<ReturnType<typeof te
           <Texto>{r.extra}</Texto>
         </Cartao>
       )}
+      {r.cuidado && (
+        <Cartao style={{ borderColor: cores.alerta }}>
+          <Subtitulo>Cuidado importante</Subtitulo>
+          <Texto>
+            Este resultado não é um diagnóstico. Se a ansiedade está pesando, conversar com um psicólogo ajuda muito. Se você estiver em
+            sofrimento intenso ou tiver pensamentos de se machucar, procure ajuda agora: CVV 188 (ligação gratuita, 24 horas) ou SAMU 192.
+          </Texto>
+          <Botao variante="secundario" titulo="Ver apoio agora" onPress={() => router.push('/apoio')} />
+          <Botao variante="secundario" titulo="Respiro 4–6 (2 minutos)" onPress={() => router.push('/respirar')} />
+        </Cartao>
+      )}
       <Botao titulo="Registrar o que percebi no diário" onPress={() => router.push('/diario-novo')} />
       <Botao variante="secundario" titulo="Refazer o teste" onPress={onRefazer} />
       <Botao variante="texto" titulo="Ver todos os testes" onPress={() => router.replace('/testes')} />

@@ -66,8 +66,8 @@ export type Evento = {
 };
 
 const EVENTOS_DEMO: Evento[] = [
-  { id: 'demo-live', titulo: 'Live GovernaMente', descricao: 'Ao vivo no Instagram e no YouTube.', tipo: 'live', dias_semana: [3, 4, 5, 6], hora: '20:00', duracao_min: 60, link: 'https://www.youtube.com/@governamenteoficial', publico: 'todos', inicio: null, fim: null, ativo: true, ordem: 10 },
-  { id: 'demo-gen', titulo: 'Grupo da Generosidade', descricao: 'Aula gratuita de regulação emocional pelo Google Meet.', tipo: 'generosidade', dias_semana: [4], hora: '19:00', duracao_min: 120, link: null, publico: 'todos', inicio: null, fim: null, ativo: true, ordem: 20 },
+  { id: 'demo-live', titulo: 'Live GovernaMente', descricao: 'Ao vivo no Instagram e no YouTube.', tipo: 'live', dias_semana: [3, 4, 5, 6], hora: '12:30', duracao_min: 60, link: 'https://www.youtube.com/@governamenteoficial', publico: 'todos', inicio: null, fim: null, ativo: true, ordem: 10 },
+  { id: 'demo-gen', titulo: 'Grupo da Generosidade', descricao: 'Aula gratuita de regulação emocional pelo Google Meet.', tipo: 'generosidade', dias_semana: [4], hora: '19:00', duracao_min: 120, link: null, publico: 'todos', inicio: null, fim: '2026-11-25', ativo: true, ordem: 20 },
 ];
 
 export async function listarEventos(): Promise<Evento[]> {

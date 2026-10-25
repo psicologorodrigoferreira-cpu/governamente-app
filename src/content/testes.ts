@@ -15,7 +15,9 @@ export type ResultadoEixo = { id: string; nome: string; d: string; pct: number }
 
 export type Teste = {
   id: string;
-  categoria: 'personalidade' | 'habilidades' | 'bemestar';
+  categoria: 'personalidade' | 'habilidades' | 'bemestar' | 'saude';
+  /** Mostra o aviso de cuidado (CVV/SAMU) no resultado. */
+  cuidado?: boolean;
   titulo: string;
   tempo: string;
   resumo: string;
@@ -43,6 +45,7 @@ export const CATEGORIAS: { id: Teste['categoria']; nome: string }[] = [
   { id: 'personalidade', nome: 'Personalidade' },
   { id: 'habilidades', nome: 'Habilidades e liderança' },
   { id: 'bemestar', nome: 'Bem-estar' },
+  { id: 'saude', nome: 'Saúde emocional' },
 ];
 
 const SOMBRA: Record<string, string> = {
@@ -683,6 +686,40 @@ export const TESTES: Teste[] = [
     ],
     rotulos: { baixo: 'Bem-estar em baixa neste momento', moderado: 'Bem-estar em equilíbrio parcial', alto: 'Bem-estar em alta' },
   },
+  {
+    id: 'ansiedade',
+    categoria: 'saude',
+    escala: 'freq',
+    modo: 'nivel',
+    cuidado: true,
+    titulo: 'Ansiedade Normal x Patológica',
+    tempo: '4 min',
+    tema: 'ansiedade',
+    resumo: 'Ajuda a distinguir a ansiedade esperada do dia a dia de uma ansiedade intensa que merece cuidado.',
+    intro: 'Pense nas últimas semanas, em situações do seu cotidiano.',
+    eixos: [
+      { id: 'pre', nome: 'Preocupação', d: 'Pensamentos antecipatórios difíceis de controlar.' },
+      { id: 'fis', nome: 'Sintomas físicos', d: 'Coração, respiração, tensão e sono.' },
+      { id: 'pan', nome: 'Pânico e evitação', d: 'Crises de medo e fuga de situações.' },
+      { id: 'imp', nome: 'Impacto e proporção', d: 'Quanto atrapalha e se é desproporcional.' },
+    ],
+    itens: [
+      ['pre', 'Me preocupo demais com várias coisas ao mesmo tempo.'],
+      ['pre', 'Tenho dificuldade de controlar a preocupação.'],
+      ['pre', 'Fico antecipando o pior mesmo sem sinais concretos.'],
+      ['fis', 'Sinto o coração disparado, falta de ar ou aperto no peito.'],
+      ['fis', 'Tenho tensão muscular, tremores ou um nó no estômago.'],
+      ['fis', 'Tenho dificuldade de relaxar ou de dormir por causa da mente acelerada.'],
+      ['pan', 'Já tive crises súbitas de medo intenso.'],
+      ['pan', 'Evito lugares ou situações por medo de passar mal.'],
+      ['pan', 'Tenho medo de ser julgado(a) em situações sociais.'],
+      ['imp', 'A ansiedade atrapalha meu trabalho ou meus estudos.'],
+      ['imp', 'A ansiedade afeta meus relacionamentos.'],
+      ['imp', 'Sinto que minha ansiedade é desproporcional à situação real.'],
+    ],
+    extra: () =>
+      'Ansiedade é uma emoção normal e útil: ela prepara você para desafios. Ela passa a merecer cuidado quando fica intensa, frequente, desproporcional à situação e atrapalha a vida. Veja especialmente o eixo de impacto e proporção.',
+  },
 ];
 
 export const testePorId = (id: string) => TESTES.find((t) => t.id === id);
@@ -742,6 +779,7 @@ export type Resultado = {
   passo: string;
   extra: string;
   mostrarGeral: boolean;
+  cuidado?: boolean;
   eixos: ResultadoEixo[];
 };
 
@@ -781,6 +819,7 @@ export function montarResultado(t: Teste, eixos: ResultadoEixo[]): Resultado {
     passo,
     extra: t.extra ? t.extra(eixos) : '',
     mostrarGeral,
+    cuidado: !!t.cuidado,
     eixos: lista,
   };
 }

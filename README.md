@@ -26,7 +26,7 @@ O teste é controlado pelo servidor (tabela `testes_gratis`, função `meu_acess
 - **Lembretes no celular**: prática do dia (diferente a cada dia da semana), diário, check-in de domingo e aviso de fim do teste.
 - **Código de acesso**: libera o app por X dias (combo livro + app, presentes, parcerias).
 - **Painel do Rodrigo** (só para administradores): números do app, publicar aulas colando o link do YouTube e gerar códigos.
-- **Testes de autoconhecimento** dentro do app (16 testes, incluindo os 12 Arquétipos), com resultado na hora e histórico só para a pessoa. Os clínicos e as atividades cronometradas continuam no portal.
+- **Testes de autoconhecimento** dentro do app (17 testes, incluindo os 12 Arquétipos e Ansiedade Normal x Patológica), com resultado na hora e histórico só para a pessoa. Os clínicos e as atividades cronometradas continuam no portal.
 - **Agenda ao vivo**: lives, Grupo da Generosidade e encontros da Mesa, com lembrete 15 minutos antes. Gerenciada pelo painel.
 - **Área do Tripulante** (só Mesa): semana atual da Travessia, link do encontro e gravações.
 - **Minha evolução**: gráfico dos check-ins, emoções do mês e resumo mensal comparando com o mês anterior.

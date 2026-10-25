@@ -76,14 +76,18 @@ insert into public.eventos (id, titulo, descricao, tipo, dias_semana, hora, dura
 values
   ('00000000-0000-4000-8000-000000000001', 'Live GovernaMente',
    'Ao vivo no Instagram e no YouTube: autorregulação emocional para quem empreende.',
-   'live', '{3,4,5,6}', '20:00', 60, 'todos', null, false, 10),
+   'live', '{3,4,5,6}', '12:30', 60, 'todos', null, true, 10),
   ('00000000-0000-4000-8000-000000000002', 'Grupo da Generosidade',
-   'Aula gratuita de regulação emocional pelo Google Meet, sem venda.',
+   'Aula gratuita de regulação emocional pelo Google Meet, sem venda. Até o fim de novembro.',
    'generosidade', '{4}', '19:00', 120, 'todos', null, true, 20),
   ('00000000-0000-4000-8000-000000000003', 'Encontro da Mesa GovernaMente',
    'Encontro ao vivo da Travessia, só para Tripulantes.',
    'mesa', '{4}', '19:00', 90, 'mesa', '2026-12-01', true, 30)
 on conflict (id) do nothing;
+
+-- O Grupo da Generosidade vai até o fim de novembro de 2026 (última quarta: 25/11).
+update public.eventos set fim = '2026-11-25'
+  where id = '00000000-0000-4000-8000-000000000002' and fim is null;
 
 -- ---------- Área do Tripulante ----------
 create table if not exists public.gravacoes (

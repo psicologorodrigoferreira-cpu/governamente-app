@@ -54,7 +54,7 @@ export default function Testes() {
       <Cartao>
         <Subtitulo>Outros testes</Subtitulo>
         <Texto style={{ color: cores.grafiteSuave }}>
-          Testes de exploração clínica e as atividades cronometradas (atenção, memória, raciocínio) ficam no portal, onde o
+          Os demais testes de exploração clínica e as atividades cronometradas (atenção, memória, raciocínio) ficam no portal, onde o
           resultado é acompanhado pelo psicólogo.
         </Texto>
         <Text style={s.link} onPress={() => Linking.openURL('https://portal.governamente.com.br/testes')}>
