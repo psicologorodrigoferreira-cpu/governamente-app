@@ -147,7 +147,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setDemo(null);
       return;
     }
-    const { error } = await supabase!.functions.invoke('excluir-conta', { method: 'POST' });
+    const { error } = await supabase!.rpc('excluir_minha_conta');
     if (error) throw new Error('Não foi possível excluir agora. Tente de novo em instantes.');
     await sairLoja();
     await supabase!.auth.signOut();

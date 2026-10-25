@@ -1,10 +1,20 @@
+import { useEffect } from 'react';
 import { Redirect, Tabs } from 'expo-router';
+import { aplicarLembretes, lerConfig } from '@/lib/lembretes';
 import { useAuth } from '@/lib/auth';
 import { cores, fontes } from '@/lib/theme';
 import { IconeConta, IconeConteudo, IconeDiario, IconeInicio, IconeTrilha } from '@/components/icones';
 
 export default function AbasLayout() {
   const { carregando, logado, acesso } = useAuth();
+
+  // Mantém os lembretes em dia com a situação do acesso (ex.: aviso de fim do teste).
+  useEffect(() => {
+    if (!logado) return;
+    lerConfig()
+      .then((c) => aplicarLembretes(c, acesso))
+      .catch(() => {});
+  }, [logado, acesso]);
   if (!carregando && !logado) return <Redirect href="/entrar" />;
   if (!carregando && !acesso.ativo) return <Redirect href="/assinar" />;
 

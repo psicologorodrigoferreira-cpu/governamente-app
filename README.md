@@ -21,6 +21,11 @@ O teste é controlado pelo servidor (tabela `testes_gratis`, função `meu_acess
 - **Check-in semanal**: 5 perguntas e histórico de evolução.
 - **Aulas em vídeo** (YouTube, tocando dentro do app), só para assinantes. Edite em `src/content/aulas.ts`.
 - **Caminhos do ecossistema** (Mesa, Plano, masterclass, livro, testes, canais).
+- **Ferramentas do livro**: meditação guiada (3, 5 ou 10 min), três gratidões por dia, Matriz de Eisenhower interativa, Pomodoro (25 + 5) e plano de constância com hábito âncora e dias seguidos.
+- **Primeiros passos**: três perguntas na entrada que indicam por onde começar a trilha e o horário do lembrete.
+- **Lembretes no celular**: prática do dia (diferente a cada dia da semana), diário, check-in de domingo e aviso de fim do teste.
+- **Código de acesso**: libera o app por X dias (combo livro + app, presentes, parcerias).
+- **Painel do Rodrigo** (só para administradores): números do app, publicar aulas colando o link do YouTube e gerar códigos.
 - **Apoio em crise** sempre acessível (CVV 188, SAMU 192).
 - **Conta**: assinatura, restaurar compras, privacidade e exclusão de conta (exigência da Apple).
 
@@ -51,6 +56,10 @@ Sem as chaves do Supabase, o app abre em **modo demonstração** (dados só no a
 
 ---
 
+## Roteiro rápido
+
+Veja **AMANHA.md**: os passos no computador para colocar o banco, o app web e a Hubla no ar.
+
 ## Guia de publicação, passo a passo
 
 Faça na ordem. Nada aqui pede que você programe.
@@ -64,11 +73,11 @@ Faça na ordem. Nada aqui pede que você programe.
 6. **RevenueCat**: revenuecat.com (grátis até US$ 2.500/mês de receita).
 
 ### 2. Banco de dados (Supabase)
-1. SQL Editor → cole `supabase/migrations/0001_inicial.sql` → Run. Depois, cole `0002_teste_gratis.sql` → Run.
+1. SQL Editor → rode, nesta ordem, `0001_inicial.sql`, `0002_teste_gratis.sql` e `0003_painel_ferramentas.sql` (pasta `supabase/migrations`).
 2. Authentication → Providers → Email: deixe **Confirm email** ligado.
 3. Authentication → URL Configuration → Site URL e Redirect URLs: `https://app.governamente.com.br`.
-4. Publique as funções `hubla-webhook` e `excluir-conta` (o Claude faz pelo terminal com o Supabase CLI).
-5. Edge Functions → Secrets: `HUBLA_WEBHOOK_TOKEN`, `HUBLA_PRODUTOS_APP`, `HUBLA_PRODUTOS_MESA`, `HUBLA_PRODUTOS_PLANO`.
+4. Publique as funções `hubla-webhook` e `revenuecat-webhook` (Edge Functions → Via Editor, com "Verify JWT" desligado).
+5. Edge Functions → Secrets: `HUBLA_WEBHOOK_TOKEN`, `HUBLA_PRODUTOS_APP`, `HUBLA_PRODUTOS_MESA`, `HUBLA_PRODUTOS_PLANO`, `HUBLA_PRODUTOS_COMBO`, `HUBLA_COMBO_DIAS`, `REVENUECAT_WEBHOOK_AUTH`.
 
 ### 3. Hubla
 1. Crie o produto **App GovernaMente** com duas ofertas de assinatura: mensal (R$ 29,90) e anual (R$ 299,00).
@@ -79,6 +88,7 @@ Faça na ordem. Nada aqui pede que você programe.
 1. App Store Connect: crie o app (`br.com.governamente.app`) e um grupo de assinaturas "GovernaMente" com duas assinaturas auto-renováveis: `governamente_mensal` (R$ 29,90/mês) e `governamente_anual` (R$ 299,00/ano). **Sem oferta introdutória grátis** (o teste já é dado pelo app). Inscreva-se no **App Store Small Business Program** (comissão de 15%).
 2. Google Play Console: crie o app e uma assinatura com dois planos base, mensal e anual, nos mesmos preços, também sem período grátis.
 3. RevenueCat: conecte as duas lojas, crie o entitlement **`acesso`** ligado aos dois produtos, e uma offering padrão com os pacotes **Monthly** e **Annual**. Copie as chaves públicas de iOS e Android.
+4. RevenueCat → Integrations → Webhooks: URL `https://xvobrpmqpnjlspluyiyw.supabase.co/functions/v1/revenuecat-webhook` e, em Authorization header, o mesmo texto do secret `REVENUECAT_WEBHOOK_AUTH`. Assim o painel conta quem assina pelas lojas.
 
 ### 5. Chaves do app
 No Expo (expo.dev → projeto → Environment variables), cadastre as chaves do `.env.example` para `preview` e `production`.

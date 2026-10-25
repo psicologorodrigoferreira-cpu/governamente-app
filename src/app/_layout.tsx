@@ -1,14 +1,16 @@
 import { useEffect } from 'react';
-import { Stack } from 'expo-router';
+import { router, Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useFonts, Fraunces_500Medium_Italic, Fraunces_600SemiBold } from '@expo-google-fonts/fraunces';
 import { Figtree_400Regular, Figtree_500Medium, Figtree_700Bold } from '@expo-google-fonts/figtree';
 import { AuthProvider } from '@/lib/auth';
+import { aoTocarLembrete, configurarExibicao } from '@/lib/lembretes';
 import { cores, fontes } from '@/lib/theme';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
+configurarExibicao();
 
 export default function RootLayout() {
   const [prontas] = useFonts({
@@ -22,6 +24,9 @@ export default function RootLayout() {
   useEffect(() => {
     if (prontas) SplashScreen.hideAsync().catch(() => {});
   }, [prontas]);
+
+  // Tocar num lembrete abre a tela correspondente.
+  useEffect(() => aoTocarLembrete((url) => router.push(url as never)), []);
 
   if (!prontas) return null;
 
@@ -51,6 +56,15 @@ export default function RootLayout() {
           <Stack.Screen name="respirar" options={{ title: 'Respiro 4–6', presentation: 'modal' }} />
           <Stack.Screen name="apoio" options={{ title: 'Apoio agora', presentation: 'modal' }} />
           <Stack.Screen name="privacidade" options={{ title: 'Privacidade' }} />
+          <Stack.Screen name="constancia" options={{ title: 'Plano de constância' }} />
+          <Stack.Screen name="pomodoro" options={{ title: 'Foco com pausa' }} />
+          <Stack.Screen name="matriz" options={{ title: 'Matriz de prioridades' }} />
+          <Stack.Screen name="gratidao" options={{ title: 'Três gratidões' }} />
+          <Stack.Screen name="meditar" options={{ title: 'Meditação', presentation: 'modal' }} />
+          <Stack.Screen name="painel" options={{ title: 'Painel' }} />
+          <Stack.Screen name="codigo" options={{ title: 'Código de acesso', presentation: 'modal' }} />
+          <Stack.Screen name="lembretes" options={{ title: 'Lembretes' }} />
+          <Stack.Screen name="primeiros-passos" options={{ headerShown: false }} />
         </Stack>
       </AuthProvider>
     </SafeAreaProvider>

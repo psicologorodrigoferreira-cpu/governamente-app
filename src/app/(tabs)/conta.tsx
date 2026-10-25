@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert, Linking, Platform } from 'react-native';
 import { router } from 'expo-router';
 import { Botao, Cartao, Legenda, Subtitulo, Tela, Texto, Titulo } from '@/components/ui';
 import { useAuth } from '@/lib/auth';
 import { diasRestantes, linkGerenciarAssinatura, LOJA_DISPONIVEL, restaurarCompras } from '@/lib/assinatura';
 import { cores } from '@/lib/theme';
+import { souAdmin } from '@/lib/admin';
 
 const ORIGEM: Record<string, string> = {
   loja: Platform.OS === 'ios' ? 'Assinatura pela App Store' : 'Assinatura pelo Google Play',
@@ -18,6 +19,10 @@ const ORIGEM: Record<string, string> = {
 export default function Conta() {
   const { nome, email, acesso, sair, excluirConta, atualizarAcesso } = useAuth();
   const [restaurando, setRestaurando] = useState(false);
+  const [admin, setAdmin] = useState(false);
+  useEffect(() => {
+    souAdmin().then(setAdmin).catch(() => {});
+  }, []);
 
   async function restaurar() {
     setRestaurando(true);
@@ -76,6 +81,20 @@ export default function Conta() {
           <Botao variante="secundario" titulo="Gerenciar assinatura" onPress={() => Linking.openURL(linkGerenciarAssinatura())} />
         )}
         {LOJA_DISPONIVEL && <Botao variante="texto" titulo="Restaurar compras" onPress={restaurar} carregando={restaurando} />}
+      </Cartao>
+
+      {admin && (
+        <Cartao escuro onPress={() => router.push('/painel')} rotulo="Abrir o painel do administrador">
+          <Subtitulo style={{ color: cores.areia }}>Painel do Rodrigo</Subtitulo>
+          <Texto style={{ color: cores.areia }}>Números do app, publicar aulas e gerar códigos de acesso.</Texto>
+        </Cartao>
+      )}
+
+      <Cartao>
+        <Subtitulo>Preferências</Subtitulo>
+        <Botao variante="secundario" titulo="Lembretes" onPress={() => router.push('/lembretes')} />
+        <Botao variante="secundario" titulo="Tenho um código de acesso" onPress={() => router.push('/codigo')} />
+        <Botao variante="texto" titulo="Refazer os primeiros passos" onPress={() => router.push('/primeiros-passos')} />
       </Cartao>
 
       <Cartao>

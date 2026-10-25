@@ -11,7 +11,11 @@ const ROTA_FERRAMENTA = {
   respiracao: { rota: '/respirar', rotulo: 'Praticar o respiro 4–6' },
   roda: { rota: '/roda', rotulo: 'Abrir a Roda das Emoções' },
   pensamento: { rota: '/diario-novo?pensamento=1', rotulo: 'Fazer o registro de pensamento' },
-  matriz: null,
+  matriz: { rota: '/matriz', rotulo: 'Abrir a Matriz de prioridades' },
+  pomodoro: { rota: '/pomodoro', rotulo: 'Experimentar o Pomodoro' },
+  constancia: { rota: '/constancia', rotulo: 'Montar meu plano de constância' },
+  gratidao: { rota: '/gratidao', rotulo: 'Anotar três gratidões' },
+  meditacao: { rota: '/meditar', rotulo: 'Meditar 5 minutos' },
 } as const;
 
 export default function EstacaoTela() {

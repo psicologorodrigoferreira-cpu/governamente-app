@@ -40,7 +40,13 @@
           "backgroundColor": "#1E3A39"
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-notifications",
+        {
+          "color": "#1E3A39"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": false

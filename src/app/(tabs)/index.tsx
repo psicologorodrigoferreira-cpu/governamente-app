@@ -1,11 +1,12 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { Botao, Cartao, Destaque, Legenda, Logo, Progresso, Subtitulo, Tela, Texto, Titulo } from '@/components/ui';
 import { useAuth } from '@/lib/auth';
 import { diasRestantes } from '@/lib/assinatura';
 import { checkinFeitoNaSemana, listarCheckins, listarConcluidas, listarDiario } from '@/lib/dados';
-import { PILARES, TRILHA } from '@/content/trilha';
+import { estacaoPorId, PILARES, TRILHA } from '@/content/trilha';
+import { lerPerfil } from '@/lib/ferramentas';
 import { cores, espaco, fontes } from '@/lib/theme';
 
 function saudacao() {
@@ -20,11 +21,23 @@ export default function Home() {
   const [concluidas, setConcluidas] = useState<string[]>([]);
   const [checkinOk, setCheckinOk] = useState(true);
   const [registrosSemana, setRegistrosSemana] = useState(0);
+  const [sugerida, setSugerida] = useState<string | null>(null);
+  const verificouPerfil = useRef(false);
 
   useFocusEffect(
     useCallback(() => {
       (async () => {
         try {
+          if (!verificouPerfil.current) {
+            verificouPerfil.current = true;
+            const perfil = await lerPerfil();
+            // Primeira vez no app: três perguntas para indicar por onde começar.
+            if (!perfil) {
+              router.replace('/primeiros-passos');
+              return;
+            }
+            setSugerida(perfil.estacao_sugerida);
+          }
           const [c, ck, d] = await Promise.all([listarConcluidas(), listarCheckins(), listarDiario()]);
           setConcluidas(c);
           setCheckinOk(checkinFeitoNaSemana(ck));
@@ -37,7 +50,9 @@ export default function Home() {
     }, []),
   );
 
-  const proxima = TRILHA.find((e) => !concluidas.includes(e.id)) ?? TRILHA[TRILHA.length - 1];
+  // Começa pela estação indicada nos primeiros passos; depois segue a ordem da trilha.
+  const indicada = sugerida && !concluidas.includes(sugerida) ? estacaoPorId(sugerida) : undefined;
+  const proxima = indicada ?? TRILHA.find((e) => !concluidas.includes(e.id)) ?? TRILHA[TRILHA.length - 1];
   const progresso = concluidas.length / TRILHA.length;
   const primeiroNome = nome.split(' ')[0];
 
@@ -75,7 +90,8 @@ export default function Home() {
 
       <Cartao onPress={() => router.push(`/estacao/${proxima.id}`)} rotulo={`Continuar a trilha: ${proxima.titulo}`}>
         <Legenda>
-          {concluidas.length === 0 ? 'COMECE A TRILHA' : 'CONTINUE A TRILHA'} · {PILARES[proxima.pilar].nome.toUpperCase()}
+          {indicada ? 'COMECE POR AQUI' : concluidas.length === 0 ? 'COMECE A TRILHA' : 'CONTINUE A TRILHA'} ·{' '}
+          {PILARES[proxima.pilar].nome.toUpperCase()}
         </Legenda>
         <Subtitulo>{proxima.titulo}</Subtitulo>
         <Texto style={{ color: cores.grafiteSuave }}>
@@ -87,12 +103,18 @@ export default function Home() {
         </Legenda>
       </Cartao>
 
-      <Subtitulo>Ferramentas de respiro</Subtitulo>
+      <Subtitulo>Ferramentas do livro</Subtitulo>
       <View style={s.grade}>
         <Atalho titulo="Respiro 4–6" texto="2 minutos para baixar a tensão" onPress={() => router.push('/respirar')} />
-        <Atalho titulo="Roda das Emoções" texto="Dê nome ao que sente" onPress={() => router.push('/roda')} />
+        <Atalho titulo="Meditação" texto="5 minutos de silêncio guiado" onPress={() => router.push('/meditar')} />
         <Atalho titulo="Registrar emoção" texto={`${registrosSemana} registro(s) nesta semana`} onPress={() => router.push('/diario-novo')} />
+        <Atalho titulo="Roda das Emoções" texto="Dê nome ao que sente" onPress={() => router.push('/roda')} />
+        <Atalho titulo="Três gratidões" texto="O que hoje teve de bom" onPress={() => router.push('/gratidao')} />
+        <Atalho titulo="Matriz de prioridades" texto="Urgente ou importante?" onPress={() => router.push('/matriz')} />
+        <Atalho titulo="Foco com pausa" texto="Pomodoro: 25 min + 5 min" onPress={() => router.push('/pomodoro')} />
+        <Atalho titulo="Plano de constância" texto="Seu hábito de todo dia" onPress={() => router.push('/constancia')} />
         <Atalho titulo="Check-in" texto={checkinOk ? 'Feito nesta semana ✓' : 'Pendente'} onPress={() => router.push('/checkin')} />
+        <Atalho titulo="Lembretes" texto="Escolha quando ser lembrado" onPress={() => router.push('/lembretes')} />
       </View>
 
       <Cartao style={{ backgroundColor: cores.areia }}>

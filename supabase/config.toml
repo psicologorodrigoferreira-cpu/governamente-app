@@ -2,5 +2,7 @@
 # A Hubla não envia login do Supabase; a função confere o x-hubla-token.
 verify_jwt = false
 
-[functions.excluir-conta]
-verify_jwt = true
+
+[functions.revenuecat-webhook]
+# O RevenueCat envia o cabeçalho Authorization configurado no painel dele; a função confere.
+verify_jwt = false

@@ -23,9 +23,9 @@ export type CheckIn = {
 };
 
 const chave = (k: string) => `gm:${k}`;
-const novoId = () => `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
+export const novoId = () => `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
 
-async function lerLocal<T>(k: string, padrao: T): Promise<T> {
+export async function lerLocal<T>(k: string, padrao: T): Promise<T> {
   try {
     const v = await AsyncStorage.getItem(chave(k));
     return v ? (JSON.parse(v) as T) : padrao;
@@ -33,7 +33,7 @@ async function lerLocal<T>(k: string, padrao: T): Promise<T> {
     return padrao;
   }
 }
-async function gravarLocal(k: string, v: unknown) {
+export async function gravarLocal(k: string, v: unknown) {
   try {
     await AsyncStorage.setItem(chave(k), JSON.stringify(v));
   } catch {
@@ -41,7 +41,7 @@ async function gravarLocal(k: string, v: unknown) {
   }
 }
 
-async function usuarioId(): Promise<string | null> {
+export async function usuarioId(): Promise<string | null> {
   if (!supabase) return null;
   const { data } = await supabase.auth.getUser();
   return data.user?.id ?? null;

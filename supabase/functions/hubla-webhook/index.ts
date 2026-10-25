@@ -5,6 +5,8 @@
 //   HUBLA_PRODUTOS_APP    IDs dos produtos da assinatura do app (separados por vírgula)
 //   HUBLA_PRODUTOS_MESA   IDs dos produtos da Mesa GovernaMente
 //   HUBLA_PRODUTOS_PLANO  IDs dos produtos do Plano Individual
+//   HUBLA_PRODUTOS_COMBO  IDs de combos (ex.: livro + app na Black November)
+//   HUBLA_COMBO_DIAS      quantos dias de app o combo libera (padrão 90)
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
 const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, {
@@ -17,7 +19,8 @@ const lista = (nome: string) =>
     .map((s) => s.trim())
     .filter(Boolean);
 
-function origemDoProduto(ids: string[]): 'hubla' | 'mesa' | 'plano' | null {
+function origemDoProduto(ids: string[]): 'hubla' | 'mesa' | 'plano' | 'combo' | null {
+  if (ids.some((id) => lista('HUBLA_PRODUTOS_COMBO').includes(id))) return 'combo';
   if (ids.some((id) => lista('HUBLA_PRODUTOS_MESA').includes(id))) return 'mesa';
   if (ids.some((id) => lista('HUBLA_PRODUTOS_PLANO').includes(id))) return 'plano';
   if (ids.some((id) => lista('HUBLA_PRODUTOS_APP').includes(id))) return 'hubla';
@@ -59,11 +62,17 @@ Deno.serve(async (req) => {
   if (tipo === 'customer.member_removed') ativo = false;
   if (ativo === null) return new Response('ignorado', { status: 200 });
 
+  // Combo é compra única: libera um período fixo de app a partir da compra.
+  const dias = Number(Deno.env.get('HUBLA_COMBO_DIAS') ?? '90') || 90;
+  const expira_em = origem === 'combo' && ativo ? new Date(Date.now() + dias * 864e5).toISOString() : undefined;
+  // No combo, "membro removido" costuma vir de reembolso: o acesso é desligado.
+
   const { error } = await supabase.from('acessos').upsert(
     {
       email,
       origem,
       ativo,
+      ...(expira_em ? { expira_em } : {}),
       ref_externa: ev?.subscription?.id ?? null,
       atualizado_em: new Date().toISOString(),
     },

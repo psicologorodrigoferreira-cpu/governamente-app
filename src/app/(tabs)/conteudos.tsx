@@ -1,9 +1,10 @@
+import { useCallback, useEffect, useState } from 'react';
 import { Linking, StyleSheet, Text, View } from 'react-native';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import Svg, { Path, Rect } from 'react-native-svg';
 import { Botao, Cartao, Destaque, Legenda, Subtitulo, Tela, Texto, Titulo } from '@/components/ui';
 import { CAMINHOS, Item } from '@/content/ecossistema';
-import { AULAS } from '@/content/aulas';
+import { AulaApp, listarAulas } from '@/lib/admin';
 import { useAuth } from '@/lib/auth';
 import { podeVerAulas } from '@/lib/assinatura';
 import { cores, espaco, fontes } from '@/lib/theme';
@@ -11,6 +12,13 @@ import { cores, espaco, fontes } from '@/lib/theme';
 export default function Conteudos() {
   const { acesso } = useAuth();
   const liberado = podeVerAulas(acesso);
+  const [aulas, setAulas] = useState<AulaApp[]>([]);
+  const carregarAulas = useCallback(() => {
+    listarAulas().then(setAulas).catch(() => {});
+  }, []);
+  useFocusEffect(carregarAulas);
+  // Ao assinar, o vídeo passa a vir junto: recarrega.
+  useEffect(carregarAulas, [carregarAulas, acesso]);
 
   return (
     <Tela>
@@ -28,7 +36,7 @@ export default function Conteudos() {
           <Botao titulo="Ver planos" onPress={() => router.push('/assinar')} style={{ backgroundColor: cores.ambar }} corTexto={cores.petroleoProfundo} />
         </Cartao>
       )}
-      {AULAS.map((a) => (
+      {aulas.map((a) => (
         <Cartao
           key={a.id}
           onPress={() => router.push(liberado ? `/aula/${a.id}` : '/assinar')}
@@ -41,7 +49,7 @@ export default function Conteudos() {
           <View style={{ flex: 1, gap: 2 }}>
             <Legenda>{a.modulo.toUpperCase()}</Legenda>
             <Text style={[s.tituloAula, !liberado && { color: cores.grafiteSuave }]}>{a.titulo}</Text>
-            <Text style={s.meta}>{!a.youtubeId ? 'Em breve' : a.minutos ? `${a.minutos} min` : 'Vídeo'}</Text>
+            <Text style={s.meta}>{!a.tem_video ? 'Em breve' : a.minutos ? `${a.minutos} min` : 'Vídeo'}</Text>
           </View>
         </Cartao>
       ))}

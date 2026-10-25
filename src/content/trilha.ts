@@ -25,7 +25,7 @@ export type Estacao = {
   minutos: number;
   resumo: string[];
   citacao?: { texto: string; capitulo: number };
-  pratica: { titulo: string; passos: string[]; ferramenta?: 'diario' | 'respiracao' | 'roda' | 'matriz' | 'pensamento' };
+  pratica: { titulo: string; passos: string[]; ferramenta?: 'diario' | 'respiracao' | 'roda' | 'matriz' | 'pensamento' | 'pomodoro' | 'constancia' | 'gratidao' | 'meditacao' };
   reflexao: string;
 };
 
@@ -276,6 +276,7 @@ export const TRILHA: Estacao[] = [
         'Coloque no seu dia, num horário fixo, por 7 dias.',
         'No check-in semanal, observe a sua energia.',
       ],
+      ferramenta: 'pomodoro',
     },
     reflexao: 'Que pequena prática te devolveria a sensação de acolhimento nesta semana?',
   },
@@ -365,6 +366,7 @@ export const TRILHA: Estacao[] = [
         'Associe a ele uma prática curta: três gratidões ou cinco minutos de respiração.',
         'Ative o check-in semanal para acompanhar sua evolução.',
       ],
+      ferramenta: 'constancia',
     },
     reflexao: 'Qual pequeno passo você dá amanhã de manhã?',
   },
