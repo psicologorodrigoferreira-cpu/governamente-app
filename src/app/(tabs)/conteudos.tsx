@@ -26,6 +26,25 @@ export default function Conteudos() {
         Aulas e <Destaque>caminhos</Destaque>
       </Titulo>
 
+      <View style={s.atalhos}>
+        <Cartao onPress={() => router.push('/testes')} rotulo="Testes de autoconhecimento" style={s.atalho}>
+          <Text style={s.atalhoTitulo}>Testes</Text>
+          <Text style={s.atalhoTexto}>Inclui os 12 Arquétipos</Text>
+        </Cartao>
+        <Cartao onPress={() => router.push('/agenda')} rotulo="Agenda ao vivo" style={s.atalho}>
+          <Text style={s.atalhoTitulo}>Agenda ao vivo</Text>
+          <Text style={s.atalhoTexto}>Lives e encontros</Text>
+        </Cartao>
+        <Cartao onPress={() => router.push('/tripulante')} rotulo="Área do Tripulante" style={s.atalho}>
+          <Text style={s.atalhoTitulo}>Área do Tripulante</Text>
+          <Text style={s.atalhoTexto}>Para quem é da Mesa</Text>
+        </Cartao>
+        <Cartao onPress={() => router.push('/evolucao')} rotulo="Minha evolução" style={s.atalho}>
+          <Text style={s.atalhoTitulo}>Minha evolução</Text>
+          <Text style={s.atalhoTexto}>Gráficos e resumo do mês</Text>
+        </Cartao>
+      </View>
+
       <Subtitulo>Aulas</Subtitulo>
       {!liberado && (
         <Cartao escuro>
@@ -95,6 +114,10 @@ function Link({ item }: { item: Item }) {
 }
 
 const s = StyleSheet.create({
+  atalhos: { gap: 8 },
+  atalho: { paddingVertical: 12 },
+  atalhoTitulo: { fontFamily: fontes.titulo, fontSize: 17, color: cores.petroleo },
+  atalhoTexto: { fontFamily: fontes.texto, fontSize: 13, color: cores.grafiteSuave },
   tituloEscuro: { fontFamily: fontes.titulo, fontSize: 20, color: cores.areia },
   textoEscuro: { fontFamily: fontes.texto, fontSize: 15, color: cores.areia, opacity: 0.85, lineHeight: 22 },
   aula: { flexDirection: 'row', alignItems: 'center', gap: espaco.m },

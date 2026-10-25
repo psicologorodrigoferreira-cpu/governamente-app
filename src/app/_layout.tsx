@@ -65,6 +65,12 @@ export default function RootLayout() {
           <Stack.Screen name="codigo" options={{ title: 'Código de acesso', presentation: 'modal' }} />
           <Stack.Screen name="lembretes" options={{ title: 'Lembretes' }} />
           <Stack.Screen name="primeiros-passos" options={{ headerShown: false }} />
+          <Stack.Screen name="testes" options={{ title: 'Testes' }} />
+          <Stack.Screen name="teste/[id]" options={{ title: 'Teste' }} />
+          <Stack.Screen name="agenda" options={{ title: 'Agenda ao vivo' }} />
+          <Stack.Screen name="tripulante" options={{ title: 'Área do Tripulante' }} />
+          <Stack.Screen name="evolucao" options={{ title: 'Minha evolução' }} />
+          <Stack.Screen name="exportar" options={{ title: 'Exportar diário', presentation: 'modal' }} />
         </Stack>
       </AuthProvider>
     </SafeAreaProvider>

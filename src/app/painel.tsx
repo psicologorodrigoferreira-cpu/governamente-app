@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Platform, Pressable, Share, StyleSheet, Switch, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Platform, Pressable, ScrollView, Share, StyleSheet, Switch, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { Botao, Campo, Cartao, Legenda, Subtitulo, Tela, Texto } from '@/components/ui';
 import {
@@ -17,8 +17,9 @@ import {
   souAdmin,
 } from '@/lib/admin';
 import { cores, espaco, fontes, raio } from '@/lib/theme';
+import { AbaAgenda, AbaMesa } from '@/components/PainelAgendaMesa';
 
-type Aba = 'numeros' | 'aulas' | 'codigos';
+type Aba = 'numeros' | 'aulas' | 'codigos' | 'agenda' | 'mesa';
 
 export default function Painel() {
   const [admin, setAdmin] = useState<boolean | null>(null);
@@ -40,12 +41,14 @@ export default function Painel() {
 
   return (
     <Tela>
-      <View style={s.abas} accessibilityRole="tablist">
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.abas} accessibilityRole="tablist">
         {(
           [
             ['numeros', 'Números'],
             ['aulas', 'Aulas'],
             ['codigos', 'Códigos'],
+            ['agenda', 'Agenda'],
+            ['mesa', 'Mesa'],
           ] as [Aba, string][]
         ).map(([id, rotulo]) => (
           <Pressable
@@ -58,10 +61,12 @@ export default function Painel() {
             <Text style={[s.abaTexto, aba === id && { color: cores.areia }]}>{rotulo}</Text>
           </Pressable>
         ))}
-      </View>
+      </ScrollView>
       {aba === 'numeros' && <Numeros />}
       {aba === 'aulas' && <Aulas />}
       {aba === 'codigos' && <Codigos />}
+      {aba === 'agenda' && <AbaAgenda />}
+      {aba === 'mesa' && <AbaMesa />}
     </Tela>
   );
 }
@@ -327,8 +332,8 @@ function Codigos() {
 }
 
 const s = StyleSheet.create({
-  abas: { flexDirection: 'row', gap: 6, backgroundColor: cores.areiaClara, borderRadius: 999, padding: 4, borderWidth: 1, borderColor: cores.linha },
-  aba: { flex: 1, alignItems: 'center', paddingVertical: 10, borderRadius: 999 },
+  abas: { flexDirection: 'row', gap: 6, padding: 4 },
+  aba: { alignItems: 'center', paddingVertical: 10, paddingHorizontal: 18, borderRadius: 999, borderWidth: 1, borderColor: cores.linha, backgroundColor: cores.areiaClara },
   abaSel: { backgroundColor: cores.petroleo },
   abaTexto: { fontFamily: fontes.textoForte, fontSize: 14, color: cores.petroleo },
   grade: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },

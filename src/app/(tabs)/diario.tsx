@@ -48,6 +48,10 @@ export default function Diario() {
       </Titulo>
       <Texto>Situação, emoção e ação. Registrar ajuda a enxergar padrões que se repetem sem que a gente perceba.</Texto>
       <Botao titulo="Novo registro" onPress={() => router.push('/diario-novo')} />
+      <View style={{ flexDirection: 'row', gap: 8 }}>
+        <Botao variante="secundario" titulo="Minha evolução" onPress={() => router.push('/evolucao')} style={{ flex: 1 }} />
+        <Botao variante="secundario" titulo="Exportar PDF" onPress={() => router.push('/exportar')} style={{ flex: 1 }} />
+      </View>
 
       {frequentes.length > 0 && (
         <Cartao>

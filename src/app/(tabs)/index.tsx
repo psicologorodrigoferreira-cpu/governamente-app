@@ -7,6 +7,7 @@ import { diasRestantes } from '@/lib/assinatura';
 import { checkinFeitoNaSemana, listarCheckins, listarConcluidas, listarDiario } from '@/lib/dados';
 import { estacaoPorId, PILARES, TRILHA } from '@/content/trilha';
 import { lerPerfil } from '@/lib/ferramentas';
+import { listarEventos, Ocorrencia, proximasOcorrencias, souTripulante } from '@/lib/ecossistema';
 import { cores, espaco, fontes } from '@/lib/theme';
 
 function saudacao() {
@@ -22,6 +23,8 @@ export default function Home() {
   const [checkinOk, setCheckinOk] = useState(true);
   const [registrosSemana, setRegistrosSemana] = useState(0);
   const [sugerida, setSugerida] = useState<string | null>(null);
+  const [aoVivo, setAoVivo] = useState<Ocorrencia | null>(null);
+  const [tripulante, setTripulante] = useState(false);
   const verificouPerfil = useRef(false);
 
   useFocusEffect(
@@ -38,6 +41,10 @@ export default function Home() {
             }
             setSugerida(perfil.estacao_sugerida);
           }
+          listarEventos()
+            .then((ev) => setAoVivo(proximasOcorrencias(ev, 7)[0] ?? null))
+            .catch(() => {});
+          souTripulante().then(setTripulante).catch(() => {});
           const [c, ck, d] = await Promise.all([listarConcluidas(), listarCheckins(), listarDiario()]);
           setConcluidas(c);
           setCheckinOk(checkinFeitoNaSemana(ck));
@@ -103,6 +110,26 @@ export default function Home() {
         </Legenda>
       </Cartao>
 
+      {tripulante && (
+        <Cartao escuro onPress={() => router.push('/tripulante')} rotulo="Abrir a Área do Tripulante">
+          <Legenda style={{ color: cores.salvia }}>MESA GOVERNAMENTE</Legenda>
+          <Text style={s.tituloEscuro}>Área do Tripulante</Text>
+          <Text style={s.textoEscuro}>Semana da Travessia, link do encontro e gravações.</Text>
+        </Cartao>
+      )}
+
+      {aoVivo && (
+        <Cartao onPress={() => router.push('/agenda')} rotulo={`Agenda ao vivo: ${aoVivo.evento.titulo}`}>
+          <Legenda>PRÓXIMO AO VIVO</Legenda>
+          <Text style={s.testeTitulo}>{aoVivo.evento.titulo}</Text>
+          <Text style={s.testeTexto}>
+            {aoVivo.quando.toLocaleDateString('pt-BR', { weekday: 'long' })} ·{' '}
+            {aoVivo.quando.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+          </Text>
+          <Text style={s.testeLink}>Ver agenda e ativar lembrete →</Text>
+        </Cartao>
+      )}
+
       <Subtitulo>Ferramentas do livro</Subtitulo>
       <View style={s.grade}>
         <Atalho titulo="Respiro 4–6" texto="2 minutos para baixar a tensão" onPress={() => router.push('/respirar')} />
@@ -114,6 +141,8 @@ export default function Home() {
         <Atalho titulo="Foco com pausa" texto="Pomodoro: 25 min + 5 min" onPress={() => router.push('/pomodoro')} />
         <Atalho titulo="Plano de constância" texto="Seu hábito de todo dia" onPress={() => router.push('/constancia')} />
         <Atalho titulo="Check-in" texto={checkinOk ? 'Feito nesta semana ✓' : 'Pendente'} onPress={() => router.push('/checkin')} />
+        <Atalho titulo="Testes" texto="Inclui os 12 Arquétipos" onPress={() => router.push('/testes')} />
+        <Atalho titulo="Minha evolução" texto="Gráficos e resumo do mês" onPress={() => router.push('/evolucao')} />
         <Atalho titulo="Lembretes" texto="Escolha quando ser lembrado" onPress={() => router.push('/lembretes')} />
       </View>
 

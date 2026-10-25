@@ -4,11 +4,12 @@ Faça na ordem. Cada passo leva poucos minutos. Não envie senhas nem chaves sec
 
 ## 1. Banco de dados (Supabase → SQL Editor)
 
-Rode os três arquivos, **nesta ordem**. Para cada um: abra no GitHub, toque em **Raw**, copie tudo, cole em **SQL Editor → New query** e clique em **Run**. Deve aparecer "Success".
+Rode os quatro arquivos, **nesta ordem**. Para cada um: abra no GitHub, toque em **Raw**, copie tudo, cole em **SQL Editor → New query** e clique em **Run**. Deve aparecer "Success".
 
 1. `supabase/migrations/0001_inicial.sql`
 2. `supabase/migrations/0002_teste_gratis.sql`
 3. `supabase/migrations/0003_painel_ferramentas.sql`
+4. `supabase/migrations/0004_testes_agenda_mesa.sql`
 
 ## 2. Endereço do app (Supabase → Authentication → URL Configuration)
 
@@ -26,7 +27,11 @@ Depois, escreva para o Claude: **"adicionei"**. Ele publica o app em app.governa
 
 ## 4. Sua conta de administrador
 
-Abra app.governamente.com.br e crie a conta com **psicologorodrigoferreira@gmail.com**. Confirme pelo link do e-mail. Em **Conta**, aparece o **Painel do Rodrigo**: números, aulas e códigos.
+Abra app.governamente.com.br e crie a conta com **psicologorodrigoferreira@gmail.com**. Confirme pelo link do e-mail. Em **Conta**, aparece o **Painel do Rodrigo**: números, aulas, códigos, agenda e Mesa.
+
+No painel, já deixe pronto:
+- **Agenda:** horário das lives (ficou 20h, terça a sexta, ainda **desativada** até você confirmar), link do Meet do Grupo da Generosidade e link do Meet da Mesa.
+- **Mesa:** confira a data de início da Travessia 01 (01/12/2026) e, se quiser, o tema de cada semana.
 
 ## 5. Funções do servidor (Supabase → Edge Functions)
 

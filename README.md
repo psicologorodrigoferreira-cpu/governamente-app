@@ -26,6 +26,11 @@ O teste é controlado pelo servidor (tabela `testes_gratis`, função `meu_acess
 - **Lembretes no celular**: prática do dia (diferente a cada dia da semana), diário, check-in de domingo e aviso de fim do teste.
 - **Código de acesso**: libera o app por X dias (combo livro + app, presentes, parcerias).
 - **Painel do Rodrigo** (só para administradores): números do app, publicar aulas colando o link do YouTube e gerar códigos.
+- **Testes de autoconhecimento** dentro do app (16 testes, incluindo os 12 Arquétipos), com resultado na hora e histórico só para a pessoa. Os clínicos e as atividades cronometradas continuam no portal.
+- **Agenda ao vivo**: lives, Grupo da Generosidade e encontros da Mesa, com lembrete 15 minutos antes. Gerenciada pelo painel.
+- **Área do Tripulante** (só Mesa): semana atual da Travessia, link do encontro e gravações.
+- **Minha evolução**: gráfico dos check-ins, emoções do mês e resumo mensal comparando com o mês anterior.
+- **Exportar o diário em PDF**, para guardar ou levar ao psicólogo.
 - **Apoio em crise** sempre acessível (CVV 188, SAMU 192).
 - **Conta**: assinatura, restaurar compras, privacidade e exclusão de conta (exigência da Apple).
 
@@ -73,7 +78,7 @@ Faça na ordem. Nada aqui pede que você programe.
 6. **RevenueCat**: revenuecat.com (grátis até US$ 2.500/mês de receita).
 
 ### 2. Banco de dados (Supabase)
-1. SQL Editor → rode, nesta ordem, `0001_inicial.sql`, `0002_teste_gratis.sql` e `0003_painel_ferramentas.sql` (pasta `supabase/migrations`).
+1. SQL Editor → rode, nesta ordem, `0001_inicial.sql`, `0002_teste_gratis.sql`, `0003_painel_ferramentas.sql` e `0004_testes_agenda_mesa.sql` (pasta `supabase/migrations`).
 2. Authentication → Providers → Email: deixe **Confirm email** ligado.
 3. Authentication → URL Configuration → Site URL e Redirect URLs: `https://app.governamente.com.br`.
 4. Publique as funções `hubla-webhook` e `revenuecat-webhook` (Edge Functions → Via Editor, com "Verify JWT" desligado).
