@@ -78,7 +78,7 @@ Faça na ordem. Nada aqui pede que você programe.
 6. **RevenueCat**: revenuecat.com (grátis até US$ 2.500/mês de receita).
 
 ### 2. Banco de dados (Supabase)
-1. SQL Editor → rode, nesta ordem, `0001_inicial.sql`, `0002_teste_gratis.sql`, `0003_painel_ferramentas.sql` e `0004_testes_agenda_mesa.sql` (pasta `supabase/migrations`).
+1. SQL Editor → rode `supabase/banco_completo.sql` (junta os quatro arquivos de `supabase/migrations`; pode rodar de novo sem quebrar).
 2. Authentication → Providers → Email: deixe **Confirm email** ligado.
 3. Authentication → URL Configuration → Site URL e Redirect URLs: `https://app.governamente.com.br`.
 4. Publique as funções `hubla-webhook` e `revenuecat-webhook` (Edge Functions → Via Editor, com "Verify JWT" desligado).

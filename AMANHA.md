@@ -1,71 +1,66 @@
-# Roteiro no computador
+# Roteiro de amanhã: o Claude executa, o Rodrigo faz os logins
 
-Faça na ordem. Cada passo leva poucos minutos. Não envie senhas nem chaves secretas no chat.
+## Antes de tudo (Rodrigo, 5 minutos)
 
-## 1. Banco de dados (Supabase → SQL Editor)
+1. No computador, abra o **app Claude (desktop)** e abra **esta mesma conversa**.
+2. Escolha **"Link to this computer"** (vincular a este computador).
+3. No navegador do app Claude, entre nas suas contas:
+   - supabase.com
+   - github.com
+   - app.hub.la
+4. Escreva **"começar"**.
 
-Rode os quatro arquivos, **nesta ordem**. Para cada um: abra no GitHub, toque em **Raw**, copie tudo, cole em **SQL Editor → New query** e clique em **Run**. Deve aparecer "Success".
-
-1. `supabase/migrations/0001_inicial.sql`
-2. `supabase/migrations/0002_teste_gratis.sql`
-3. `supabase/migrations/0003_painel_ferramentas.sql`
-4. `supabase/migrations/0004_testes_agenda_mesa.sql`
-
-## 2. Endereço do app (Supabase → Authentication → URL Configuration)
-
-- **Site URL:** `https://app.governamente.com.br`
-- **Redirect URLs:** adicione `https://app.governamente.com.br/**`
-
-## 3. Chave da Hostinger no GitHub
-
-github.com/psicologorodrigoferreira-cpu/governamente-app/settings/keys → **Add deploy key**
-- Title: `Hostinger`
-- Key: a chave que começa com `ssh-rsa AAAAB3...` (está na conversa)
-- **Não** marque "Allow write access"
-
-Depois, escreva para o Claude: **"adicionei"**. Ele publica o app em app.governamente.com.br.
-
-## 4. Sua conta de administrador
-
-Abra app.governamente.com.br e crie a conta com **psicologorodrigoferreira@gmail.com**. Confirme pelo link do e-mail. Em **Conta**, aparece o **Painel do Rodrigo**: números, aulas, códigos, agenda e Mesa.
-
-No painel, já deixe pronto:
-- **Agenda:** os horários já estão certos (lives terça a sexta às 12h30; Grupo da Generosidade às quartas, 19h, até 25/11; Mesa às quartas, 19h, a partir de 01/12). Falta só colar os links: do YouTube/Instagram para as lives, e do Meet para o Grupo e para a Mesa.
-- **Mesa:** confira a data de início da Travessia 01 (01/12/2026) e, se quiser, o tema de cada semana.
-
-## 5. Funções do servidor (Supabase → Edge Functions)
-
-Para cada função: **Deploy a new function → Via Editor**, use o nome exato, apague o código de exemplo, cole o arquivo e publique. Depois, abra a função → **Details** e **desligue "Verify JWT"** (os avisos vêm da Hubla e do RevenueCat, não de um usuário logado).
-
-| Nome | Arquivo |
-|---|---|
-| `hubla-webhook` | `supabase/functions/hubla-webhook/index.ts` |
-| `revenuecat-webhook` | `supabase/functions/revenuecat-webhook/index.ts` (pode deixar para quando criar o RevenueCat) |
-
-Em **Edge Functions → Secrets**, cadastre:
-
-| Nome | Valor |
-|---|---|
-| `HUBLA_WEBHOOK_TOKEN` | token da Hubla (Integrações → Webhook → Autenticação) |
-| `HUBLA_PRODUTOS_APP` | ID do produto "App GovernaMente" na Hubla |
-| `HUBLA_PRODUTOS_MESA` | ID do produto da Mesa |
-| `HUBLA_PRODUTOS_PLANO` | ID do produto do Plano Individual |
-| `HUBLA_PRODUTOS_COMBO` | ID do combo livro + app (Black November) |
-| `HUBLA_COMBO_DIAS` | dias de app que o combo libera (ex.: `90`) |
-| `REVENUECAT_WEBHOOK_AUTH` | um texto longo inventado por você; o mesmo vai no RevenueCat |
-
-Os IDs dos produtos o Claude consegue buscar pela Hubla, se você pedir.
-
-## 6. Hubla → Integrações → Webhook
-
-- URL: `https://xvobrpmqpnjlspluyiyw.supabase.co/functions/v1/hubla-webhook`
-- Eventos: **membro adicionado** e **membro removido** dos produtos App, Mesa, Plano e Combo.
-
-## 7. Apple Developer
-
-developer.apple.com/programs/enroll → Individual. A aprovação leva de 1 a 3 dias. Ela é necessária para o app ir para o iPhone (TestFlight e App Store).
+Regras do dia:
+- **Senhas, tokens e chaves secretas você digita ou cola.** O Claude nunca digita senha.
+- Antes de qualquer ação que não dá para desfazer, o Claude pede seu "ok".
 
 ---
 
-### Depois (com a conta Apple aprovada)
+## O que o Claude faz, na ordem
+
+| # | Etapa | Quem | Situação hoje |
+|---|---|---|---|
+| 1 | Colocar a chave da Hostinger no GitHub (Deploy key, só leitura) | Claude, no navegador | chave pronta |
+| 2 | Tirar a página padrão da Hostinger (`default.php`) e publicar o app em **app.governamente.com.br** (ramo `web`) | Claude, com seu ok | pasta só tem `default.php`; versão web já está gerada e atualizada |
+| 3 | Banco: colar `supabase/banco_completo.sql` no SQL Editor e rodar | Claude | arquivo único pronto, testado 2× do zero |
+| 4 | Supabase → Authentication: Site URL `https://app.governamente.com.br`, Redirect `https://app.governamente.com.br/**`, "Confirm email" ligado | Claude | — |
+| 5 | Publicar a função `hubla-webhook` (Via Editor, "Verify JWT" desligado) | Claude | código pronto |
+| 6 | Secrets da função: IDs dos produtos (Claude) e token da Hubla (**Rodrigo cola**) | os dois | IDs já levantados (abaixo) |
+| 7 | Hubla → Webhook: URL e eventos de membro adicionado/removido | Claude, no navegador | — |
+| 8 | Criar sua conta de administrador no app (**Rodrigo escolhe a senha**) e confirmar o e-mail | Rodrigo | — |
+| 9 | Painel: colar os links das lives, do Grupo da Generosidade e da Mesa; conferir a Travessia 01 | Claude | horários já certos |
+| 10 | Criar na Hubla o produto **App GovernaMente** (mensal e anual) | Claude, com seu ok no preço | não existe ainda |
+| 11 | Teste completo: conta nova → 7 dias grátis → código de acesso → painel | Claude | — |
+| 12 | Apple Developer (dados pessoais e pagamento de US$ 99) | Rodrigo, Claude orienta | — |
+
+---
+
+## Dados já levantados (Hubla)
+
+| Secret | Valor | Produto |
+|---|---|---|
+| `HUBLA_PRODUTOS_MESA` | `47fdLh7Seo2ZmDLl2yjH,fVlZ1zw6JXI5PrWb9tUT` | Mesa GovernaMente · Travessia 01 |
+| `HUBLA_PRODUTOS_PLANO` | `o3yi1BJfOtRkeEUJ9JEN,EIUHsJMuFaXQseSFOBhM` | Plano de Acompanhamento GovernaMente |
+| `HUBLA_PRODUTOS_COMBO` | `CKTDwAHmxgwu8O2Ev3d5,r40Oov2Y0lYSRhGhPKcR` | Kit Fundador GovernaMente — Livro + App (rascunho) |
+| `HUBLA_PRODUTOS_APP` | definido depois da etapa 10 | App GovernaMente |
+| `HUBLA_COMBO_DIAS` | `90`, a confirmar | dias de app no Kit Fundador |
+| `HUBLA_WEBHOOK_TOKEN` | **Rodrigo cola** | Hubla → Webhook → Autenticação |
+
+Cada produto aparece com dois IDs (o novo e o antigo), para funcionar com qualquer um dos dois que a Hubla mandar.
+
+URL do webhook: `https://xvobrpmqpnjlspluyiyw.supabase.co/functions/v1/hubla-webhook`
+
+---
+
+## Decisões que só você toma (pode responder amanhã)
+
+1. **Plano anual:** R$ 299,00 (sugerido)?
+2. **Kit Fundador:** quantos dias de app ele dá? (padrão: 90)
+3. **Links:**
+   - lives (YouTube ou Instagram);
+   - Meet do Grupo da Generosidade;
+   - Meet da Mesa.
+
+## Depois (com a conta Apple aprovada)
+
 RevenueCat, assinaturas mensal e anual nas lojas, primeira versão no TestFlight. O passo a passo completo está no README.

@@ -74,7 +74,8 @@ begin
 end $$;
 
 -- ---------- O app pergunta: "eu tenho acesso?" ----------
-create or replace function public.meu_acesso()
+drop function if exists public.meu_acesso();
+create function public.meu_acesso()
 returns table (ativo boolean, origem text)
 language sql
 stable
