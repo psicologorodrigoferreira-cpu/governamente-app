@@ -1,24 +1,28 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { Botao, Legenda, Tela, Texto } from '@/components/ui';
 import { cores, espaco, fontes } from '@/lib/theme';
+import { ControlesGuia, useGuia } from '@/components/ControlesGuia';
+import { MEDITACAO, MEDITACAO_FIM } from '@/content/guias';
+import { falar, silenciar, tocar } from '@/lib/guia';
 
-// Meditação curta, como no livro (caps. 3 e 12): começar com cinco minutos e voltar à respiração com gentileza.
-const GUIAS: { em: number; texto: string }[] = [
-  { em: 0, texto: 'Sente-se confortável. Se quiser, feche os olhos.' },
-  { em: 0.1, texto: 'Leve a atenção para a respiração. Não precisa mudar nada, só observe.' },
-  { em: 0.3, texto: 'Se a mente for para os desafios do dia, tudo bem. Gentilmente, volte para a respiração.' },
-  { em: 0.5, texto: 'Repare no corpo: ombros, mandíbula, mãos. Solte o que der para soltar.' },
-  { em: 0.7, texto: 'Pense num lago sereno: quando a água se acalma, dá para ver o fundo com clareza.' },
-  { em: 0.9, texto: 'Prepare-se para voltar. O que você está sentindo agora?' },
-];
+// Meditação curta, como no livro (caps. 3 e 12): começar com poucos minutos e voltar à respiração com gentileza.
 const OPCOES = [3, 5, 10];
 
 export default function Meditar() {
   const [minutos, setMinutos] = useState(5);
   const [restante, setRestante] = useState<number | null>(null);
+  const { prefs, mudar } = useGuia();
+  const prefsRef = useRef(prefs);
+  const faladas = useRef<Set<string>>(new Set());
+  useEffect(() => {
+    prefsRef.current = prefs;
+  }, [prefs]);
   const total = minutos * 60;
+  const roteiro = MEDITACAO[minutos];
+
+  useEffect(() => () => silenciar(), []);
 
   useEffect(() => {
     if (restante === null || restante <= 0) return;
@@ -28,8 +32,38 @@ export default function Meditar() {
 
   const ativo = restante !== null && restante > 0;
   const terminou = restante === 0;
-  const progresso = restante === null ? 0 : (total - restante) / total;
-  const guia = [...GUIAS].reverse().find((g) => progresso >= g.em) ?? GUIAS[0];
+  const decorrido = restante === null ? 0 : total - restante;
+  const progresso = decorrido / total;
+  const guia = [...roteiro].reverse().find((g) => decorrido >= g.em) ?? roteiro[0];
+
+  // Fala cada trecho no seu tempo.
+  useEffect(() => {
+    if (!ativo || !prefsRef.current.voz) return;
+    const g = [...roteiro].reverse().find((x) => decorrido >= x.em);
+    if (g && !faladas.current.has(g.id)) {
+      faladas.current.add(g.id);
+      falar(g);
+    }
+  }, [ativo, decorrido, roteiro]);
+
+  // Sino e fala de encerramento.
+  useEffect(() => {
+    if (!terminou) return;
+    if (prefsRef.current.sons) tocar('sino', 0.6);
+    if (prefsRef.current.voz) setTimeout(() => falar(MEDITACAO_FIM), prefsRef.current.sons ? 1800 : 0);
+  }, [terminou]);
+
+  function comecar() {
+    silenciar();
+    faladas.current = new Set();
+    if (prefs.sons) tocar('sino', 0.6);
+    setRestante(total);
+  }
+
+  function encerrar() {
+    silenciar();
+    setRestante(null);
+  }
 
   return (
     <Tela>
@@ -50,7 +84,9 @@ export default function Meditar() {
               </Pressable>
             ))}
           </View>
-          <Botao titulo="Começar" onPress={() => setRestante(total)} />
+          <Legenda>GUIA</Legenda>
+          <ControlesGuia prefs={prefs} mudar={mudar} />
+          <Botao titulo="Começar" onPress={comecar} />
         </>
       )}
 
@@ -63,16 +99,16 @@ export default function Meditar() {
           <Legenda>
             {Math.floor(restante! / 60)}:{String(restante! % 60).padStart(2, '0')}
           </Legenda>
-          <Botao variante="texto" titulo="Encerrar" onPress={() => setRestante(null)} />
+          <Botao variante="texto" titulo="Encerrar" onPress={encerrar} />
         </View>
       )}
 
       {terminou && (
         <>
-          <Text style={s.guia}>Pronto. Obrigado por esse tempo com você.</Text>
+          <Text style={s.guia}>{MEDITACAO_FIM.texto}</Text>
           <Texto style={{ textAlign: 'center' }}>Quer registrar o que percebeu?</Texto>
           <Botao titulo="Registrar no diário" onPress={() => router.replace('/diario-novo')} />
-          <Botao variante="secundario" titulo="Meditar de novo" onPress={() => setRestante(null)} />
+          <Botao variante="secundario" titulo="Meditar de novo" onPress={encerrar} />
         </>
       )}
     </Tela>
