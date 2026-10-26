@@ -59,7 +59,7 @@ export default function Respirar() {
         <Animated.View style={[s.circulo, { transform: [{ scale: escala }] }]} />
         <View style={s.rotulo} pointerEvents="none">
           <Text style={s.fase} accessibilityLiveRegion="polite">
-            {ativo ? FASES[fase].nome : terminou ? 'Pronto.' : 'Quando quiser'}
+            {ativo ? FASES[fase].nome : terminou ? 'Pronto.' : 'Respire'}
           </Text>
           {ativo && (
             <Legenda style={{ color: cores.areia }}>

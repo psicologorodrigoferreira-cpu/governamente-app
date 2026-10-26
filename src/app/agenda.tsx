@@ -30,7 +30,8 @@ const quandoTexto = (d: Date) => {
       : d.toDateString() === amanha.toDateString()
         ? 'Amanhã'
         : d.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'short' });
-  return `${dia} · ${d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
+  const diaFmt = dia.charAt(0).toUpperCase() + dia.slice(1).replace(/\.$/, '');
+  return `${diaFmt} · ${d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
 };
 
 export default function Agenda() {
@@ -115,7 +116,7 @@ export default function Agenda() {
 const s = StyleSheet.create({
   linha: { flexDirection: 'row', gap: espaco.m, alignItems: 'center' },
   marca: { width: 6, alignSelf: 'stretch', borderRadius: 3 },
-  quando: { fontFamily: fontes.textoForte, fontSize: 13, color: cores.grafiteSuave, textTransform: 'capitalize' },
+  quando: { fontFamily: fontes.textoForte, fontSize: 13, color: cores.grafiteSuave },
   titulo: { fontFamily: fontes.titulo, fontSize: 18, color: cores.petroleo },
   lembrete: { flexDirection: 'row', alignItems: 'center', gap: espaco.m, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: cores.linha },
   lembreteTitulo: { fontFamily: fontes.textoForte, fontSize: 15, color: cores.petroleo },
