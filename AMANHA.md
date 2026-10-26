@@ -45,7 +45,7 @@ Regras do dia:
 | `HUBLA_PRODUTOS_PLANO` | `o3yi1BJfOtRkeEUJ9JEN,EIUHsJMuFaXQseSFOBhM` | Plano de Acompanhamento GovernaMente |
 | `HUBLA_PRODUTOS_COMBO` | `CKTDwAHmxgwu8O2Ev3d5,r40Oov2Y0lYSRhGhPKcR` | Kit Fundador GovernaMente — Livro + App (rascunho) |
 | `HUBLA_PRODUTOS_APP` | `XKrpotkBdo0jo7PmmSCc,vFXfGOAB9ZwPqms64i1S` | App GovernaMente |
-| `HUBLA_COMBO_DIAS` | `90` | dias de app no Kit Fundador |
+| `HUBLA_COMBO_DIAS` | `365` | dias de app no Kit Fundador (12 meses, Black November) |
 | `HUBLA_WEBHOOK_TOKEN` | **Rodrigo cola** | Hubla → Webhook → Autenticação |
 
 Cada produto aparece com dois IDs (o novo e o antigo), para funcionar com qualquer um dos dois que a Hubla mandar.
