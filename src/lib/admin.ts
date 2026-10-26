@@ -50,6 +50,18 @@ export async function lerMetricas(): Promise<Metricas> {
   return data as Metricas;
 }
 
+export type Testador = { id: number; nome: string; email: string; whatsapp: string | null; criado_em: string };
+
+/** Inscritos na página governamente.com.br/aplicativo/testadores/ (só o admin lê). */
+export async function listarTestadores(): Promise<Testador[]> {
+  const { data, error } = await supabase!
+    .from('testadores')
+    .select('id, nome, email, whatsapp, criado_em')
+    .order('criado_em', { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as Testador[];
+}
+
 export type AulaEditavel = {
   id: string;
   modulo: string;

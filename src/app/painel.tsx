@@ -10,16 +10,18 @@ import {
   lerMetricas,
   listarAulasAdmin,
   listarCodigos,
+  listarTestadores,
   Metricas,
   removerAula,
   salvarAula,
   slug,
   souAdmin,
+  Testador,
 } from '@/lib/admin';
 import { cores, espaco, fontes, raio } from '@/lib/theme';
 import { AbaAgenda, AbaMesa } from '@/components/PainelAgendaMesa';
 
-type Aba = 'numeros' | 'aulas' | 'codigos' | 'agenda' | 'mesa';
+type Aba = 'numeros' | 'testadores' | 'aulas' | 'codigos' | 'agenda' | 'mesa';
 
 export default function Painel() {
   const [admin, setAdmin] = useState<boolean | null>(null);
@@ -45,6 +47,7 @@ export default function Painel() {
         {(
           [
             ['numeros', 'Números'],
+            ['testadores', 'Testadores'],
             ['aulas', 'Aulas'],
             ['codigos', 'Códigos'],
             ['agenda', 'Agenda'],
@@ -63,6 +66,7 @@ export default function Painel() {
         ))}
       </ScrollView>
       {aba === 'numeros' && <Numeros />}
+      {aba === 'testadores' && <Testadores />}
       {aba === 'aulas' && <Aulas />}
       {aba === 'codigos' && <Codigos />}
       {aba === 'agenda' && <AbaAgenda />}
@@ -121,6 +125,72 @@ function Numero({ valor, rotulo, destaque }: { valor: number | string; rotulo: s
     <View style={[s.numero, destaque && { backgroundColor: cores.petroleo }]}>
       <Text style={[s.numeroValor, destaque && { color: cores.areia }]}>{valor}</Text>
       <Text style={[s.numeroRotulo, destaque && { color: cores.salvia }]}>{rotulo}</Text>
+    </View>
+  );
+}
+
+// ---------------- Testadores (teste fechado da Google Play) ----------------
+const META_TESTADORES = 12;
+
+function Testadores() {
+  const [lista, setLista] = useState<Testador[] | null>(null);
+  const [erro, setErro] = useState(false);
+  const carregar = useCallback(() => {
+    listarTestadores()
+      .then((r) => {
+        setErro(false);
+        setLista(r);
+      })
+      .catch(() => setErro(true));
+  }, []);
+  useEffect(carregar, [carregar]);
+
+  async function copiarEmails() {
+    const texto = (lista ?? []).map((t) => t.email).join(', ');
+    if (Platform.OS === 'web' && typeof navigator !== 'undefined' && navigator.clipboard) {
+      await navigator.clipboard.writeText(texto);
+      Alert.alert('E-mails copiados', 'Cole na lista de testadores do Play Console.');
+      return;
+    }
+    await Share.share({ message: texto });
+  }
+
+  if (erro) return <Texto>Não foi possível carregar os testadores agora.</Texto>;
+  if (!lista) return <ActivityIndicator color={cores.petroleo} />;
+
+  const total = lista.length;
+  const falta = Math.max(0, META_TESTADORES - total);
+  const pct = Math.min(100, Math.round((total / META_TESTADORES) * 100));
+
+  return (
+    <View style={{ gap: espaco.m }}>
+      <View style={s.grade}>
+        <Numero valor={total} rotulo="Inscritos" destaque />
+        <Numero valor={falta} rotulo={falta ? `Faltam para ${META_TESTADORES}` : 'Meta atingida'} />
+      </View>
+      <View style={s.barra} accessibilityRole="progressbar" accessibilityValue={{ min: 0, max: META_TESTADORES, now: total }}>
+        <View style={[s.barraCheia, { width: `${pct}%` }]} />
+      </View>
+      <Legenda>
+        Inscrições pela página governamente.com.br/aplicativo/testadores/. Convide alguns a mais que 12, para o caso de alguém sair do teste antes dos 14 dias.
+      </Legenda>
+      {total > 0 && (
+        <Botao titulo={Platform.OS === 'web' ? 'Copiar e-mails para o Play Console' : 'Compartilhar e-mails'} onPress={copiarEmails} />
+      )}
+      {total === 0 && <Legenda>Nenhuma inscrição ainda.</Legenda>}
+      {lista.map((t) => (
+        <View key={t.id} style={s.codigoLinha}>
+          <Text style={s.tituloAula}>{t.nome}</Text>
+          <Text selectable style={s.codigoInfo}>
+            {t.email}
+            {t.whatsapp ? ` · ${t.whatsapp}` : ''}
+          </Text>
+          <Text style={s.codigoInfo}>
+            {new Date(t.criado_em).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
+          </Text>
+        </View>
+      ))}
+      <Botao variante="secundario" titulo="Atualizar" onPress={carregar} />
     </View>
   );
 }
@@ -349,4 +419,6 @@ const s = StyleSheet.create({
   codigoLinha: { borderBottomWidth: 1, borderBottomColor: cores.linha, paddingVertical: 8 },
   codigo: { fontFamily: fontes.textoForte, fontSize: 15, color: cores.petroleo, letterSpacing: 1 },
   codigoInfo: { fontFamily: fontes.texto, fontSize: 13, color: cores.grafiteSuave },
+  barra: { height: 10, borderRadius: 999, backgroundColor: cores.linha, overflow: 'hidden' },
+  barraCheia: { height: '100%', backgroundColor: cores.ambar, borderRadius: 999 },
 });
