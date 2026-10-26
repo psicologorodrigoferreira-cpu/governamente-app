@@ -17,11 +17,15 @@
       "distribution": "internal",
       "environment": "preview",
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        "image": "latest"
       },
       "env": {
         "EXPO_PUBLIC_SUPABASE_URL": "https://xvobrpmqpnjlspluyiyw.supabase.co",
         "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_1hwBjUX96YxThx0jED2VWQ_lY8NAst4"
+      },
+      "ios": {
+        "image": "latest"
       }
     },
     "production": {
@@ -30,6 +34,12 @@
       "env": {
         "EXPO_PUBLIC_SUPABASE_URL": "https://xvobrpmqpnjlspluyiyw.supabase.co",
         "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_1hwBjUX96YxThx0jED2VWQ_lY8NAst4"
+      },
+      "android": {
+        "image": "latest"
+      },
+      "ios": {
+        "image": "latest"
       }
     }
   },
