@@ -1,5 +1,7 @@
 # Roteiro de amanhã: o Claude executa, o Rodrigo faz os logins
 
+> **Situação em 26/10/2026:** etapas 1 a 8 e 10 concluídas. App no ar em app.governamente.com.br, banco criado, webhook da Hubla testado (concedido e removido), conta de administrador ativa, produto "App GovernaMente" criado na Hubla (mensal R$ 29,90 e anual R$ 299,00, ainda em rascunho; ID `XKrpotkBdo0jo7PmmSCc`). Apple Developer pago, aguardando liberação. Faltam: publicar a oferta na Hubla, links da agenda na hora das lives, RevenueCat e lojas.
+
 ## Antes de tudo (Rodrigo, 5 minutos)
 
 1. No computador, abra o **app Claude (desktop)** e abra **esta mesma conversa**.
@@ -42,8 +44,8 @@ Regras do dia:
 | `HUBLA_PRODUTOS_MESA` | `47fdLh7Seo2ZmDLl2yjH,fVlZ1zw6JXI5PrWb9tUT` | Mesa GovernaMente · Travessia 01 |
 | `HUBLA_PRODUTOS_PLANO` | `o3yi1BJfOtRkeEUJ9JEN,EIUHsJMuFaXQseSFOBhM` | Plano de Acompanhamento GovernaMente |
 | `HUBLA_PRODUTOS_COMBO` | `CKTDwAHmxgwu8O2Ev3d5,r40Oov2Y0lYSRhGhPKcR` | Kit Fundador GovernaMente — Livro + App (rascunho) |
-| `HUBLA_PRODUTOS_APP` | definido depois da etapa 10 | App GovernaMente |
-| `HUBLA_COMBO_DIAS` | `90`, a confirmar | dias de app no Kit Fundador |
+| `HUBLA_PRODUTOS_APP` | `XKrpotkBdo0jo7PmmSCc,vFXfGOAB9ZwPqms64i1S` | App GovernaMente |
+| `HUBLA_COMBO_DIAS` | `90` | dias de app no Kit Fundador |
 | `HUBLA_WEBHOOK_TOKEN` | **Rodrigo cola** | Hubla → Webhook → Autenticação |
 
 Cada produto aparece com dois IDs (o novo e o antigo), para funcionar com qualquer um dos dois que a Hubla mandar.
