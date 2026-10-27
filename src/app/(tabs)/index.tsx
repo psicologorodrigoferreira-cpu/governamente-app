@@ -4,9 +4,9 @@ import { router, useFocusEffect } from 'expo-router';
 import { Botao, Cartao, Destaque, Legenda, Logo, Progresso, Subtitulo, Tela, Texto, Titulo } from '@/components/ui';
 import { useAuth } from '@/lib/auth';
 import { diasRestantes } from '@/lib/assinatura';
-import { checkinFeitoNaSemana, listarCheckins, listarConcluidas, listarDiario } from '@/lib/dados';
+import { checkinFeitoNaSemana, lerLocal, listarCheckins, listarConcluidas, listarDiario } from '@/lib/dados';
 import { estacaoPorId, PILARES, TRILHA } from '@/content/trilha';
-import { lerPerfil } from '@/lib/ferramentas';
+import { CHAVE_PULOU_TRIAGEM, lerPerfil } from '@/lib/ferramentas';
 import { listarEventos, Ocorrencia, proximasOcorrencias, souTripulante } from '@/lib/ecossistema';
 import { cores, espaco, fontes } from '@/lib/theme';
 
@@ -36,10 +36,13 @@ export default function Home() {
             const perfil = await lerPerfil();
             // Primeira vez no app: três perguntas para indicar por onde começar.
             if (!perfil) {
-              router.replace('/primeiros-passos');
-              return;
+              if (!(await lerLocal(CHAVE_PULOU_TRIAGEM, false))) {
+                router.replace('/primeiros-passos');
+                return;
+              }
+            } else {
+              setSugerida(perfil.estacao_sugerida);
             }
-            setSugerida(perfil.estacao_sugerida);
           }
           listarEventos()
             .then((ev) => setAoVivo(proximasOcorrencias(ev, 7)[0] ?? null))

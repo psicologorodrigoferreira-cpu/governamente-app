@@ -11,6 +11,9 @@ export const diaDeHoje = hoje;
 // ---------- Primeiros passos ----------
 export type Perfil = { foco: string; minutos: number; periodo: 'manha' | 'tarde' | 'noite'; estacao_sugerida: string };
 
+/** Marca que a pessoa pulou a triagem: o Início não a abre de novo (dá para refazer em Conta). */
+export const CHAVE_PULOU_TRIAGEM = 'primeiros-passos-pulou';
+
 export async function lerPerfil(): Promise<Perfil | null> {
   const uid = await usuarioId();
   if (supabase && uid) {

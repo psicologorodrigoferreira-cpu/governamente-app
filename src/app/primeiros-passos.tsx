@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { Botao, Destaque, Legenda, Logo, Tela, Texto, Titulo } from '@/components/ui';
-import { salvarPerfil, Perfil } from '@/lib/ferramentas';
+import { CHAVE_PULOU_TRIAGEM, salvarPerfil, Perfil } from '@/lib/ferramentas';
 import { aplicarLembretes, lerConfig, LEMBRETES_DISPONIVEIS, pedirPermissao, salvarConfig } from '@/lib/lembretes';
 import { useAuth } from '@/lib/auth';
 import { estacaoPorId } from '@/content/trilha';
+import { gravarLocal } from '@/lib/dados';
 import { cores, espaco, fontes, raio } from '@/lib/theme';
 
 const FOCOS = [
@@ -48,7 +49,17 @@ export default function PrimeirosPassos() {
       /* segue mesmo assim: as respostas podem ser refeitas depois */
     }
     setSalvando(false);
-    router.replace(`/estacao/${estacao}`);
+    // Início fica por baixo: na estação, o botão de voltar leva para o app.
+    // Veio de Conta → volta para lá; primeira vez → o Início entra no lugar da triagem.
+    if (router.canGoBack()) router.back();
+    else router.replace('/(tabs)');
+    setTimeout(() => router.push(`/estacao/${estacao}`), 50);
+  }
+
+  async function pular() {
+    await gravarLocal(CHAVE_PULOU_TRIAGEM, true).catch(() => {});
+    if (router.canGoBack()) router.back();
+    else router.replace('/(tabs)');
   }
 
   const primeiro = nome.split(' ')[0];
@@ -70,6 +81,7 @@ export default function PrimeirosPassos() {
             <Opcao key={f.id} rotulo={f.rotulo} ativo={foco === f.id} onPress={() => setFoco(f.id)} />
           ))}
           <Botao titulo="Continuar" desativado={!foco} onPress={() => setPasso(1)} />
+          <Botao variante="texto" titulo="Pular por agora e ir para o Início" onPress={pular} />
         </>
       )}
 
