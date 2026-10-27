@@ -46,6 +46,7 @@ export default function RootLayout() {
         >
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="entrar" options={{ headerShown: false }} />
+          <Stack.Screen name="nova-senha" options={{ headerShown: false }} />
           <Stack.Screen name="assinar" options={{ title: 'Assinatura', presentation: 'modal' }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="estacao/[id]" options={{ title: 'Trilha' }} />
