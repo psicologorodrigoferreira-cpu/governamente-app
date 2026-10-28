@@ -41,6 +41,7 @@
         }
       ],
       "expo-secure-store",
+      "./plugins/sem-push-ios",
       [
         "expo-notifications",
         {
