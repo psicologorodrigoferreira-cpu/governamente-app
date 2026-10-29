@@ -71,6 +71,10 @@ export default function RootLayout() {
           <Stack.Screen name="agenda" options={{ title: 'Agenda ao vivo' }} />
           <Stack.Screen name="tripulante" options={{ title: 'Área do Tripulante' }} />
           <Stack.Screen name="evolucao" options={{ title: 'Minha evolução' }} />
+          <Stack.Screen name="detox/index" options={{ title: 'Detox Digital' }} />
+          <Stack.Screen name="detox/dia/[n]" options={{ title: 'Detox Digital' }} />
+          <Stack.Screen name="detox/pausa" options={{ title: 'Pausa do impulso', presentation: 'modal' }} />
+          <Stack.Screen name="detox/concluido" options={{ title: 'Trilha concluída' }} />
           <Stack.Screen name="exportar" options={{ title: 'Exportar diário', presentation: 'modal' }} />
         </Stack>
       </AuthProvider>

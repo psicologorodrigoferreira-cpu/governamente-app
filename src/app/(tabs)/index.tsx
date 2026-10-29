@@ -9,6 +9,9 @@ import { estacaoPorId, PILARES, TRILHA } from '@/content/trilha';
 import { CHAVE_PULOU_TRIAGEM, lerPerfil } from '@/lib/ferramentas';
 import { listarEventos, Ocorrencia, proximasOcorrencias, souTripulante } from '@/lib/ecossistema';
 import { cores, espaco, fontes } from '@/lib/theme';
+import { Marcadores } from '@/components/detox';
+import { DETOX } from '@/content/detox';
+import { EstadoDetox, estadoDetox, listarDetox } from '@/lib/detox';
 
 function saudacao() {
   const h = new Date().getHours();
@@ -25,6 +28,7 @@ export default function Home() {
   const [sugerida, setSugerida] = useState<string | null>(null);
   const [aoVivo, setAoVivo] = useState<Ocorrencia | null>(null);
   const [tripulante, setTripulante] = useState(false);
+  const [detox, setDetox] = useState<EstadoDetox | null>(null);
   const verificouPerfil = useRef(false);
 
   useFocusEffect(
@@ -48,6 +52,9 @@ export default function Home() {
             .then((ev) => setAoVivo(proximasOcorrencias(ev, 7)[0] ?? null))
             .catch(() => {});
           souTripulante().then(setTripulante).catch(() => {});
+          listarDetox()
+            .then((l) => setDetox(estadoDetox(l)))
+            .catch(() => setDetox(estadoDetox([])));
           const [c, ck, d] = await Promise.all([listarConcluidas(), listarCheckins(), listarDiario()]);
           setConcluidas(c);
           setCheckinOk(checkinFeitoNaSemana(ck));
@@ -78,6 +85,29 @@ export default function Home() {
         {primeiroNome ? `, ${primeiroNome}` : ''}.{'\n'}
         <Destaque>Qual é o passo possível hoje?</Destaque>
       </Titulo>
+
+      {detox && !detox.terminou && (
+        <Cartao escuro onPress={() => router.push('/detox')} rotulo="Abrir a trilha Detox Digital" style={{ gap: espaco.m }}>
+          <View style={s.detoxTopo}>
+            <Legenda style={{ color: cores.ambar }}>{detox.concluidos.length === 0 ? 'SUGERIDO PARA VOCÊ' : 'SUA TRILHA EM ANDAMENTO'}</Legenda>
+            <View style={s.novo}>
+              <Text style={s.novoTexto}>5 DIAS</Text>
+            </View>
+          </View>
+          <Text style={s.detoxTitulo}>
+            Detox <Text style={{ fontFamily: fontes.tituloItalico, color: cores.ambar }}>Digital</Text>
+          </Text>
+          <Text style={s.textoEscuro}>{DETOX.subtitulo}. Um ajuste por dia, com o seu tempo de tela medido.</Text>
+          <Marcadores concluidos={detox.concluidos} atual={detox.proximo} escuro />
+          <Text style={s.detoxLink}>
+            {detox.concluidos.length === 0
+              ? 'Começar o dia 1 →'
+              : detox.liberaAmanha
+                ? 'Ajuste de hoje feito ✓ · registrar tempo de tela →'
+                : `Fazer o dia ${detox.proximo} →`}
+          </Text>
+        </Cartao>
+      )}
 
       {emTeste && (
         <Cartao onPress={() => router.push('/assinar')} rotulo="Ver planos de assinatura" style={s.teste}>
@@ -135,6 +165,11 @@ export default function Home() {
 
       <Subtitulo>Ferramentas do livro</Subtitulo>
       <View style={s.grade}>
+        <Atalho
+          titulo="Detox Digital"
+          texto={detox?.terminou ? 'Tempo de tela e revisão' : `${detox?.concluidos.length ?? 0} de 5 dias`}
+          onPress={() => router.push('/detox')}
+        />
         <Atalho titulo="Respiro 4–6" texto="2 minutos para baixar a tensão" onPress={() => router.push('/respirar')} />
         <Atalho titulo="Meditação" texto="5 minutos de silêncio guiado" onPress={() => router.push('/meditar')} />
         <Atalho titulo="Registrar emoção" texto={`${registrosSemana} registro(s) nesta semana`} onPress={() => router.push('/diario-novo')} />
@@ -184,5 +219,10 @@ const s = StyleSheet.create({
   testeTitulo: { fontFamily: fontes.titulo, fontSize: 19, color: cores.petroleo },
   testeTexto: { fontFamily: fontes.texto, fontSize: 14, color: cores.grafite, lineHeight: 20 },
   testeLink: { fontFamily: fontes.textoForte, fontSize: 14, color: cores.ambarTerra },
+  detoxTopo: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  novo: { backgroundColor: cores.ambar, borderRadius: 999, paddingHorizontal: 10, paddingVertical: 3 },
+  novoTexto: { fontFamily: fontes.textoForte, fontSize: 11, color: cores.petroleo, letterSpacing: 0.5 },
+  detoxTitulo: { fontFamily: fontes.titulo, fontSize: 28, color: cores.areia, lineHeight: 34 },
+  detoxLink: { fontFamily: fontes.textoForte, fontSize: 15, color: cores.ambar },
   citacao: { fontFamily: fontes.tituloItalico, fontSize: 19, color: cores.petroleo, lineHeight: 26 },
 });
