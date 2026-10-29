@@ -52,10 +52,8 @@ export default function Assinar() {
   const anualNum = planos.find((p) => p.tipo === 'anual')?.pacote.product.price;
   const economia =
     mensalNum && anualNum ? Math.round((1 - anualNum / (mensalNum * 12)) * 100) : Math.round((1 - 299 / (29.9 * 12)) * 100);
-  const porMesAnual =
-    anualNum !== undefined
-      ? planos.find((p) => p.tipo === 'anual')!.pacote.product.pricePerMonthString ?? null
-      : 'R$ 24,92';
+  const moedaAnual = planos.find((p) => p.tipo === 'anual')?.pacote.product.currencyCode;
+  const porMesAnual = anualNum !== undefined ? formatarMoeda(anualNum / 12, moedaAnual) : 'R$ 24,92';
 
   async function comprar() {
     setErro('');
@@ -257,3 +255,12 @@ const s = StyleSheet.create({
     overflow: 'hidden',
   },
 });
+
+/** Valor no padrão brasileiro (R$ 24,92 / US$ 4,17), na moeda que a loja informou. */
+function formatarMoeda(valor: number, moeda?: string | null): string {
+  try {
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: moeda || 'BRL' }).format(valor);
+  } catch {
+    return `${moeda === 'BRL' || !moeda ? 'R$' : moeda} ${valor.toFixed(2).replace('.', ',')}`;
+  }
+}
