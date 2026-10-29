@@ -95,7 +95,11 @@ export default function Diario() {
           </View>
           <Rotulado rotulo="Situação" texto={r.situacao} />
           {!!r.pensamento && <Rotulado rotulo="Pensamento" texto={r.pensamento} />}
-          <Rotulado rotulo="Ação" texto={r.acao} />
+          {r.acao ? (
+            <Rotulado rotulo="Ação" texto={r.acao} />
+          ) : (
+            <Botao variante="secundario" titulo="Completar este registro" onPress={() => router.push(`/diario-novo?id=${r.id}`)} />
+          )}
           <Botao variante="texto" titulo="Apagar" onPress={() => confirmarApagar(r.id)} style={{ alignSelf: 'flex-end' }} />
         </Cartao>
       ))}

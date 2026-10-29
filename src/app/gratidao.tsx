@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react';
 import { Alert, StyleSheet, Text, View } from 'react-native';
-import { useFocusEffect } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { Botao, Campo, Cartao, Legenda, Subtitulo, Tela, Texto } from '@/components/ui';
-import { diaDeHoje, Gratidao, listarGratidao, salvarGratidao } from '@/lib/ferramentas';
+import { diaDeHoje, Gratidao, gratidaoNoDiario, listarGratidao, salvarGratidao } from '@/lib/ferramentas';
 import { cores, fontes } from '@/lib/theme';
 
 // Cap. 12 do livro: ao fim do dia, anotar três coisas pelas quais você é grato.
@@ -31,6 +31,9 @@ export default function GratidaoTela() {
       await salvarGratidao(preenchidos);
       setSalvo(true);
       carregar();
+      // Já entra no Diário das Emoções; a pessoa só completa o registro.
+      const id = await gratidaoNoDiario(preenchidos);
+      router.push(`/diario-novo?id=${id}&origem=gratidao`);
     } catch {
       Alert.alert('Não foi possível salvar', 'Verifique sua conexão e tente de novo.');
     } finally {
@@ -44,7 +47,7 @@ export default function GratidaoTela() {
     <Tela>
       <Texto>
         Ao fim do dia, anote três coisas pelas quais você é grato. Pode ser algo pequeno: um café sem pressa, uma conversa boa,
-        um problema que se resolveu.
+        um problema que se resolveu. Ao salvar, elas entram no seu Diário das Emoções.
       </Texto>
       {itens.map((v, i) => (
         <Campo
@@ -59,7 +62,7 @@ export default function GratidaoTela() {
           maxLength={200}
         />
       ))}
-      <Botao titulo={salvo ? 'Salvo ✓' : 'Salvar as gratidões de hoje'} onPress={salvar} carregando={salvando} />
+      <Botao titulo={salvo ? 'Salvo no diário ✓' : 'Salvar e registrar no diário'} onPress={salvar} carregando={salvando} />
 
       {anteriores.length > 0 && <Subtitulo>Dias anteriores</Subtitulo>}
       {anteriores.slice(0, 30).map((g) => (

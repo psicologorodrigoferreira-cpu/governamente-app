@@ -1,13 +1,15 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
-import { Botao, Campo, Chip, Legenda, Tela, Texto } from '@/components/ui';
-import { salvarDiario } from '@/lib/dados';
+import { router, Stack, useLocalSearchParams } from 'expo-router';
+import { Botao, Campo, Cartao, Chip, Legenda, Tela, Texto } from '@/components/ui';
+import { atualizarDiario, lerRegistro, salvarDiario } from '@/lib/dados';
 import { SENTIMENTOS } from '@/content/emocoes';
 import { cores, fontes } from '@/lib/theme';
 
 export default function NovoRegistro() {
-  const { pensamento: comPensamento } = useLocalSearchParams<{ pensamento?: string }>();
+  const { pensamento: comPensamento, id, origem } = useLocalSearchParams<{ pensamento?: string; id?: string; origem?: string }>();
+  const editando = !!id;
+  const daGratidao = origem === 'gratidao';
   const [situacao, setSituacao] = useState('');
   const [emocoes, setEmocoes] = useState<string[]>([]);
   const [intensidade, setIntensidade] = useState(5);
@@ -17,6 +19,23 @@ export default function NovoRegistro() {
   const [erro, setErro] = useState('');
   const [salvando, setSalvando] = useState(false);
   const modoPensamento = comPensamento === '1';
+
+  // Completar um registro já salvo (por exemplo, as gratidões do dia).
+  useEffect(() => {
+    if (!id) return;
+    lerRegistro(String(id))
+      .then((r) => {
+        if (!r) return;
+        setSituacao(r.situacao);
+        setEmocoes(r.emocoes);
+        setIntensidade(r.intensidade);
+        const [pens, alt] = (r.pensamento ?? '').split('\nAlternativo: ');
+        setPensamento(pens ?? '');
+        setAlternativo(alt ?? '');
+        setAcao(r.acao);
+      })
+      .catch(() => {});
+  }, [id]);
 
   function alternar(e: string) {
     setEmocoes((atual) => (atual.includes(e) ? atual.filter((x) => x !== e) : [...atual, e]));
@@ -32,14 +51,20 @@ export default function NovoRegistro() {
       const textoPensamento = [pensamento.trim(), alternativo.trim() && `Alternativo: ${alternativo.trim()}`]
         .filter(Boolean)
         .join('\n');
-      await salvarDiario({
+      const registro = {
         situacao: situacao.trim(),
         emocoes,
         intensidade,
         pensamento: textoPensamento || undefined,
         acao: acao.trim(),
-      });
-      router.back();
+      };
+      if (editando) {
+        await atualizarDiario(String(id), { ...registro, pensamento: textoPensamento || null });
+        router.replace('/(tabs)/diario');
+      } else {
+        await salvarDiario(registro);
+        router.back();
+      }
     } catch {
       Alert.alert('Não foi possível salvar', 'Verifique sua conexão e tente de novo.');
     } finally {
@@ -49,6 +74,16 @@ export default function NovoRegistro() {
 
   return (
     <Tela>
+      {editando && <Stack.Screen options={{ title: 'Completar registro' }} />}
+      {daGratidao && (
+        <Cartao style={{ borderColor: cores.ambar, backgroundColor: '#FBF1E1' }}>
+          <Legenda style={{ color: cores.ambarTerra }}>JÁ SALVO NO SEU DIÁRIO ✓</Legenda>
+          <Texto style={{ fontSize: 15 }}>
+            Suas gratidões de hoje entraram no Diário das Emoções. Agora complete: o que você sentiu, com que intensidade e o que fez com
+            isso.
+          </Texto>
+        </Cartao>
+      )}
       <Campo
         rotulo="1. Situação: o que aconteceu?"
         value={situacao}
@@ -108,11 +143,12 @@ export default function NovoRegistro() {
         value={acao}
         onChangeText={setAcao}
         multiline
-        placeholder="Ex.: respirei, pedi um dia para responder"
+        placeholder={daGratidao ? 'Ex.: agradeci a quem me ajudou, guardei esse momento' : 'Ex.: respirei, pedi um dia para responder'}
       />
 
       {!!erro && <Text style={s.erro}>{erro}</Text>}
-      <Botao titulo="Salvar registro" onPress={salvar} carregando={salvando} />
+      <Botao titulo={editando ? 'Completar registro' : 'Salvar registro'} onPress={salvar} carregando={salvando} />
+      {daGratidao && <Botao variante="texto" titulo="Completar depois" onPress={() => router.replace('/(tabs)/diario')} />}
       <Legenda style={{ textAlign: 'center' }}>Seus registros são privados e protegidos.</Legenda>
     </Tela>
   );

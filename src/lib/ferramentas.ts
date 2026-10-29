@@ -1,6 +1,6 @@
 /** Dados das ferramentas do livro e dos primeiros passos (Supabase ou, no modo demonstração, o aparelho). */
 import { supabase } from './supabase';
-import { gravarLocal, lerLocal, novoId, usuarioId } from './dados';
+import { atualizarDiario, gravarLocal, lerLocal, lerRegistro, novoId, salvarDiario, usuarioId } from './dados';
 
 const hoje = () => {
   const d = new Date();
@@ -56,6 +56,24 @@ export async function salvarGratidao(itens: string[]) {
   }
   const atual = (await lerLocal<Gratidao[]>('gratidao', [])).filter((g) => g.dia !== dia);
   await gravarLocal('gratidao', [{ id: novoId(), dia, itens }, ...atual]);
+}
+
+/**
+ * Leva as gratidões do dia para o Diário das Emoções (um registro por dia).
+ * Devolve o id do registro, para a pessoa completar emoção, intensidade e ação.
+ */
+export async function gratidaoNoDiario(itens: string[]): Promise<string> {
+  const dia = hoje();
+  const situacao = `Três gratidões de hoje:\n${itens.map((i) => `• ${i}`).join('\n')}`;
+  const mapa = await lerLocal<Record<string, string>>('gratidao-diario', {});
+  const existente = mapa[dia] ? await lerRegistro(mapa[dia]).catch(() => null) : null;
+  if (existente) {
+    await atualizarDiario(existente.id, { situacao });
+    return existente.id;
+  }
+  const id = await salvarDiario({ situacao, emocoes: ['Gratidão'], intensidade: 7, acao: '' });
+  await gravarLocal('gratidao-diario', { [dia]: id });
+  return id;
 }
 
 // ---------- Matriz de Eisenhower ----------

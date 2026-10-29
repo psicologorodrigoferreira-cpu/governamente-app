@@ -7,7 +7,7 @@ export type RegistroDiario = {
   situacao: string;
   emocoes: string[];
   intensidade: number; // 0 a 10
-  pensamento?: string;
+  pensamento?: string | null;
   acao: string;
 };
 
@@ -62,15 +62,42 @@ export async function listarDiario(): Promise<RegistroDiario[]> {
   return lerLocal<RegistroDiario[]>('diario', []);
 }
 
-export async function salvarDiario(r: Omit<RegistroDiario, 'id' | 'criado_em'>) {
+export async function salvarDiario(r: Omit<RegistroDiario, 'id' | 'criado_em'>): Promise<string> {
   const uid = await usuarioId();
   if (supabase && uid) {
-    const { error } = await supabase.from('diario').insert({ ...r, usuario_id: uid });
+    const { data, error } = await supabase.from('diario').insert({ ...r, usuario_id: uid }).select('id').single();
+    if (error) throw error;
+    return (data as { id: string }).id;
+  }
+  const id = novoId();
+  const atual = await lerLocal<RegistroDiario[]>('diario', []);
+  await gravarLocal('diario', [{ ...r, id, criado_em: new Date().toISOString() }, ...atual]);
+  return id;
+}
+
+export async function lerRegistro(id: string): Promise<RegistroDiario | null> {
+  const uid = await usuarioId();
+  if (supabase && uid) {
+    const { data, error } = await supabase
+      .from('diario')
+      .select('id, criado_em, situacao, emocoes, intensidade, pensamento, acao')
+      .eq('id', id)
+      .maybeSingle();
+    if (error) throw error;
+    return (data as RegistroDiario) ?? null;
+  }
+  return (await lerLocal<RegistroDiario[]>('diario', [])).find((r) => r.id === id) ?? null;
+}
+
+export async function atualizarDiario(id: string, r: Partial<Omit<RegistroDiario, 'id' | 'criado_em'>>) {
+  const uid = await usuarioId();
+  if (supabase && uid) {
+    const { error } = await supabase.from('diario').update(r).eq('id', id);
     if (error) throw error;
     return;
   }
   const atual = await lerLocal<RegistroDiario[]>('diario', []);
-  await gravarLocal('diario', [{ ...r, id: novoId(), criado_em: new Date().toISOString() }, ...atual]);
+  await gravarLocal('diario', atual.map((x) => (x.id === id ? { ...x, ...r } : x)));
 }
 
 export async function apagarDiario(id: string) {
