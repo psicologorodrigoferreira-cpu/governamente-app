@@ -10,7 +10,8 @@
       "environment": "development",
       "env": {
         "EXPO_PUBLIC_SUPABASE_URL": "https://xvobrpmqpnjlspluyiyw.supabase.co",
-        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_1hwBjUX96YxThx0jED2VWQ_lY8NAst4"
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_1hwBjUX96YxThx0jED2VWQ_lY8NAst4",
+        "EXPO_PUBLIC_RC_IOS_KEY": "appl_uoHrmdRlwvriasCzjSvYUxkwZVG"
       }
     },
     "preview": {
@@ -22,7 +23,8 @@
       },
       "env": {
         "EXPO_PUBLIC_SUPABASE_URL": "https://xvobrpmqpnjlspluyiyw.supabase.co",
-        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_1hwBjUX96YxThx0jED2VWQ_lY8NAst4"
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_1hwBjUX96YxThx0jED2VWQ_lY8NAst4",
+        "EXPO_PUBLIC_RC_IOS_KEY": "appl_uoHrmdRlwvriasCzjSvYUxkwZVG"
       },
       "ios": {
         "image": "latest"
@@ -33,7 +35,8 @@
       "environment": "production",
       "env": {
         "EXPO_PUBLIC_SUPABASE_URL": "https://xvobrpmqpnjlspluyiyw.supabase.co",
-        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_1hwBjUX96YxThx0jED2VWQ_lY8NAst4"
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_1hwBjUX96YxThx0jED2VWQ_lY8NAst4",
+        "EXPO_PUBLIC_RC_IOS_KEY": "appl_uoHrmdRlwvriasCzjSvYUxkwZVG"
       },
       "android": {
         "image": "latest"
