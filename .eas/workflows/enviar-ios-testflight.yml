@@ -1,0 +1,20 @@
+# Envia um build iOS já pronto ao TestFlight.
+# Rodar em expo.dev → Workflows → Run workflow, informando o ID do build.
+name: Enviar iOS ao TestFlight
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_id:
+        description: ID do build iOS no expo.dev
+        type: string
+        required: true
+
+jobs:
+  enviar:
+    name: Enviar ao TestFlight
+    type: submit
+    params:
+      platform: ios
+      build_id: ${{ inputs.build_id }}
+      profile: production
