@@ -8,6 +8,8 @@ import {
   extrairYoutubeId,
   gerarCodigos,
   lerMetricas,
+  Assinante,
+  listarAssinantes,
   listarAulasAdmin,
   listarCodigos,
   listarTestadores,
@@ -21,7 +23,7 @@ import {
 import { cores, espaco, fontes, raio } from '@/lib/theme';
 import { AbaAgenda, AbaMesa } from '@/components/PainelAgendaMesa';
 
-type Aba = 'numeros' | 'testadores' | 'aulas' | 'codigos' | 'agenda' | 'mesa';
+type Aba = 'numeros' | 'assinantes' | 'testadores' | 'aulas' | 'codigos' | 'agenda' | 'mesa';
 
 export default function Painel() {
   const [admin, setAdmin] = useState<boolean | null>(null);
@@ -47,6 +49,7 @@ export default function Painel() {
         {(
           [
             ['numeros', 'Números'],
+            ['assinantes', 'Assinantes'],
             ['testadores', 'Testadores'],
             ['aulas', 'Aulas'],
             ['codigos', 'Códigos'],
@@ -66,6 +69,7 @@ export default function Painel() {
         ))}
       </ScrollView>
       {aba === 'numeros' && <Numeros />}
+      {aba === 'assinantes' && <Assinantes />}
       {aba === 'testadores' && <Testadores />}
       {aba === 'aulas' && <Aulas />}
       {aba === 'codigos' && <Codigos />}
@@ -125,6 +129,100 @@ function Numero({ valor, rotulo, destaque }: { valor: number | string; rotulo: s
     <View style={[s.numero, destaque && { backgroundColor: cores.petroleo }]}>
       <Text style={[s.numeroValor, destaque && { color: cores.areia }]}>{valor}</Text>
       <Text style={[s.numeroRotulo, destaque && { color: cores.salvia }]}>{rotulo}</Text>
+    </View>
+  );
+}
+
+// ---------------- Assinantes (lojas e site) ----------------
+const LOJAS: Record<string, string> = { APP_STORE: 'App Store', PLAY_STORE: 'Google Play' };
+
+function nomePlano(produto: string | null) {
+  if (!produto) return '';
+  if (/anual/i.test(produto)) return 'Anual';
+  if (/mensal/i.test(produto)) return 'Mensal';
+  return produto;
+}
+
+function situacao(a: Assinante): { texto: string; cor: string } {
+  if (!a.ativo) return { texto: 'Encerrada', cor: cores.grafiteSuave };
+  if (a.ultimo_evento === 'CANCELLATION') return { texto: 'Cancelou a renovação', cor: cores.alerta };
+  if (a.ultimo_evento === 'BILLING_ISSUE') return { texto: 'Problema no pagamento', cor: cores.alerta };
+  return { texto: 'Ativa', cor: cores.petroleo };
+}
+
+function Assinantes() {
+  const [lista, setLista] = useState<Assinante[] | null>(null);
+  const [erro, setErro] = useState(false);
+  const [filtro, setFiltro] = useState<'todos' | 'loja' | 'hubla'>('todos');
+  const carregar = useCallback(() => {
+    listarAssinantes()
+      .then((r) => {
+        setErro(false);
+        setLista(r);
+      })
+      .catch(() => setErro(true));
+  }, []);
+  useEffect(carregar, [carregar]);
+
+  if (erro) return <Texto>Não foi possível carregar os assinantes agora.</Texto>;
+  if (!lista) return <ActivityIndicator color={cores.petroleo} />;
+
+  const ativos = lista.filter((a) => a.ativo);
+  const vis = lista.filter((a) => filtro === 'todos' || a.origem === filtro);
+  const data = (d: string) => new Date(d).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
+
+  return (
+    <View style={{ gap: espaco.m }}>
+      <View style={s.grade}>
+        <Numero valor={ativos.length} rotulo="Assinaturas ativas" destaque />
+        <Numero valor={ativos.filter((a) => a.loja === 'APP_STORE').length} rotulo="App Store" />
+        <Numero valor={ativos.filter((a) => a.loja === 'PLAY_STORE').length} rotulo="Google Play" />
+        <Numero valor={ativos.filter((a) => a.origem === 'hubla').length} rotulo="Site (Hubla)" />
+      </View>
+      <View style={{ flexDirection: 'row', gap: espaco.s }}>
+        {(
+          [
+            ['todos', 'Todos'],
+            ['loja', 'Lojas'],
+            ['hubla', 'Site'],
+          ] as const
+        ).map(([id, rotulo]) => (
+          <Pressable
+            key={id}
+            accessibilityRole="button"
+            accessibilityState={{ selected: filtro === id }}
+            onPress={() => setFiltro(id)}
+            style={[s.aba, filtro === id && s.abaSel]}
+          >
+            <Text style={[s.abaTexto, filtro === id && { color: cores.areia }]}>{rotulo}</Text>
+          </Pressable>
+        ))}
+      </View>
+      {vis.length === 0 && <Legenda>Nenhuma assinatura registrada ainda.</Legenda>}
+      {vis.map((a) => {
+        const st = situacao(a);
+        const onde = a.origem === 'hubla' ? 'Site (Hubla)' : LOJAS[a.loja ?? ''] ?? 'Loja';
+        const plano = nomePlano(a.produto);
+        return (
+          <View key={`${a.email}-${a.origem}`} style={s.codigoLinha}>
+            <Text selectable style={s.tituloAula}>
+              {a.email}
+            </Text>
+            <Text style={s.codigoInfo}>
+              {onde}
+              {plano ? ` · ${plano}` : ''}
+            </Text>
+            <Text style={[s.codigoInfo, { color: st.cor, fontFamily: fontes.textoForte }]}>
+              {st.texto}
+              {a.expira_em ? ` · ${a.ativo && a.ultimo_evento !== 'CANCELLATION' ? 'renova' : 'acesso até'} ${data(a.expira_em)}` : ''}
+            </Text>
+          </View>
+        );
+      })}
+      <Legenda>
+        Assinaturas das lojas chegam pelo RevenueCat logo após a compra, renovação ou cancelamento. Compras de teste (TestFlight e testadores de licença) também aparecem aqui.
+      </Legenda>
+      <Botao variante="secundario" titulo="Atualizar" onPress={carregar} />
     </View>
   );
 }

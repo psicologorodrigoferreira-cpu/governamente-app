@@ -62,6 +62,24 @@ export async function listarTestadores(): Promise<Testador[]> {
   return (data ?? []) as Testador[];
 }
 
+export type Assinante = {
+  email: string;
+  origem: 'loja' | 'hubla';
+  loja: string | null;
+  produto: string | null;
+  ativo: boolean;
+  expira_em: string | null;
+  ultimo_evento: string | null;
+  atualizado_em: string;
+};
+
+/** Quem assinou pelas lojas (RevenueCat) e pelo site (Hubla). Só o admin. */
+export async function listarAssinantes(): Promise<Assinante[]> {
+  const { data, error } = await supabase!.rpc('painel_assinantes');
+  if (error) throw error;
+  return (data ?? []) as Assinante[];
+}
+
 export type AulaEditavel = {
   id: string;
   modulo: string;

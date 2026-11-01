@@ -64,6 +64,8 @@ Deno.serve(async (req) => {
       ativo,
       expira_em,
       ref_externa: ev.product_id ?? null,
+      loja: ev.store ?? null,
+      ultimo_evento: tipo || null,
       atualizado_em: new Date().toISOString(),
     },
     { onConflict: 'email,origem' },
