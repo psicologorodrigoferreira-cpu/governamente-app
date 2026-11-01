@@ -77,6 +77,7 @@ export default function RootLayout() {
           <Stack.Screen name="detox/concluido" options={{ title: 'Trilha concluída' }} />
           <Stack.Screen name="ritual" options={{ title: 'Ritual', presentation: 'modal' }} />
           <Stack.Screen name="travessia" options={{ title: 'Sua travessia' }} />
+          <Stack.Screen name="feedback" options={{ title: 'Sua opinião' }} />
           <Stack.Screen name="duvidas" options={{ title: 'Dúvidas frequentes' }} />
           <Stack.Screen name="exportar" options={{ title: 'Exportar diário', presentation: 'modal' }} />
         </Stack>

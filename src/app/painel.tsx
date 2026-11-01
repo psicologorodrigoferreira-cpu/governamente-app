@@ -13,6 +13,8 @@ import {
   listarAulasAdmin,
   listarCodigos,
   listarTestadores,
+  listarFeedbacks,
+  FeedbackResp,
   Metricas,
   removerAula,
   salvarAula,
@@ -24,7 +26,7 @@ import { cores, espaco, fontes, raio } from '@/lib/theme';
 import { AbaAgenda, AbaMesa } from '@/components/PainelAgendaMesa';
 import { lerConfiguracoes, salvarConfiguracao } from '@/lib/ecossistema';
 
-type Aba = 'numeros' | 'assinantes' | 'testadores' | 'aulas' | 'codigos' | 'agenda' | 'mesa';
+type Aba = 'numeros' | 'assinantes' | 'testadores' | 'feedbacks' | 'aulas' | 'codigos' | 'agenda' | 'mesa';
 
 export default function Painel() {
   const [admin, setAdmin] = useState<boolean | null>(null);
@@ -52,6 +54,7 @@ export default function Painel() {
             ['numeros', 'Números'],
             ['assinantes', 'Assinantes'],
             ['testadores', 'Testadores'],
+            ['feedbacks', 'Feedbacks'],
             ['aulas', 'Aulas'],
             ['codigos', 'Códigos'],
             ['agenda', 'Agenda'],
@@ -72,6 +75,7 @@ export default function Painel() {
       {aba === 'numeros' && <Numeros />}
       {aba === 'assinantes' && <Assinantes />}
       {aba === 'testadores' && <Testadores />}
+      {aba === 'feedbacks' && <Feedbacks />}
       {aba === 'aulas' && <Aulas />}
       {aba === 'codigos' && <Codigos />}
       {aba === 'agenda' && <AbaAgenda />}
@@ -230,6 +234,68 @@ function Assinantes() {
 
 // ---------------- Testadores (teste fechado da Google Play) ----------------
 const META_TESTADORES = 12;
+
+function Feedbacks() {
+  const [lista, setLista] = useState<FeedbackResp[] | null>(null);
+  const [erro, setErro] = useState(false);
+  useEffect(() => {
+    listarFeedbacks()
+      .then(setLista)
+      .catch(() => setErro(true));
+  }, []);
+
+  if (erro) return <Texto>Não foi possível carregar os feedbacks agora.</Texto>;
+  if (!lista) return <ActivityIndicator color={cores.petroleo} />;
+
+  const total = lista.length;
+  const media = total ? (lista.reduce((a, f) => a + f.nota, 0) / total).toFixed(1).replace('.', ',') : '–';
+  // NPS: % de notas 9–10 menos % de notas 0–6.
+  const nps = total ? Math.round(((lista.filter((f) => f.nota >= 9).length - lista.filter((f) => f.nota <= 6).length) / total) * 100) : null;
+  const contagem = new Map<string, number>();
+  lista.forEach((f) => f.favoritas.forEach((x) => contagem.set(x, (contagem.get(x) ?? 0) + 1)));
+  const top = [...contagem.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const comErro = lista.filter((f) => f.erro).length;
+
+  return (
+    <View style={{ gap: espaco.m }}>
+      <View style={s.grade}>
+        <Numero valor={total} rotulo="Respostas" destaque />
+        <Numero valor={media} rotulo="Nota média (0–10)" />
+        <Numero valor={nps ?? '–'} rotulo="NPS" />
+        <Numero valor={comErro} rotulo="Relataram erro" />
+      </View>
+      <Legenda>Link do formulário: app.governamente.com.br/feedback</Legenda>
+      {top.length > 0 && (
+        <Cartao>
+          <Legenda>FUNÇÕES MAIS QUERIDAS</Legenda>
+          {top.map(([nome, n]) => (
+            <Texto key={nome} style={{ fontSize: 15 }}>
+              {nome}: {n}
+            </Texto>
+          ))}
+        </Cartao>
+      )}
+      {lista.map((f) => (
+        <Cartao key={f.id}>
+          <Legenda>
+            {new Date(f.criado_em).toLocaleDateString('pt-BR')} · NOTA {f.nota}
+            {f.facilidade ? ` · FACILIDADE ${f.facilidade}/5` : ''}
+            {f.preco ? ` · PREÇO: ${f.preco.toUpperCase()}` : ''}
+          </Legenda>
+          <Text style={s.tituloAula}>{f.nome || 'Sem nome'}</Text>
+          {!!(f.contato || f.aparelho || f.dias_uso) && (
+            <Legenda>{[f.contato, f.aparelho, f.dias_uso && `usou ${f.dias_uso}`].filter(Boolean).join(' · ')}</Legenda>
+          )}
+          {f.favoritas.length > 0 && <Texto style={{ fontSize: 14 }}>Gostou: {f.favoritas.join(', ')}</Texto>}
+          {!!f.confuso && <Texto style={{ fontSize: 14 }}>Confuso: {f.confuso}</Texto>}
+          {!!f.erro && <Texto style={{ fontSize: 14, color: cores.alerta }}>Erro: {f.erro}</Texto>}
+          {!!f.falta && <Texto style={{ fontSize: 14 }}>Para assinar / falta: {f.falta}</Texto>}
+          <Legenda>{f.pode_contatar ? 'Aceita ser contatado' : 'Prefere não ser contatado'}</Legenda>
+        </Cartao>
+      ))}
+    </View>
+  );
+}
 
 function Testadores() {
   const [lista, setLista] = useState<Testador[] | null>(null);

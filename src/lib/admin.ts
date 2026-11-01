@@ -156,3 +156,30 @@ export async function resgatarCodigo(codigo: string): Promise<{ ok: boolean; men
   const linha = Array.isArray(data) ? data[0] : data;
   return { ok: !!linha?.ok, mensagem: linha?.mensagem ?? 'Não foi possível validar o código.' };
 }
+
+// ---------------- Feedbacks dos testadores ----------------
+export type FeedbackResp = {
+  id: number;
+  nome: string | null;
+  contato: string | null;
+  aparelho: string | null;
+  dias_uso: string | null;
+  nota: number;
+  facilidade: number | null;
+  favoritas: string[];
+  confuso: string | null;
+  erro: string | null;
+  falta: string | null;
+  preco: string | null;
+  pode_contatar: boolean;
+  criado_em: string;
+};
+
+export async function listarFeedbacks(): Promise<FeedbackResp[]> {
+  const { data, error } = await supabase!
+    .from('feedbacks')
+    .select('id, nome, contato, aparelho, dias_uso, nota, facilidade, favoritas, confuso, erro, falta, preco, pode_contatar, criado_em')
+    .order('criado_em', { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as FeedbackResp[];
+}
