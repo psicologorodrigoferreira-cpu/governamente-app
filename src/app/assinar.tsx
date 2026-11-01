@@ -161,6 +161,7 @@ export default function Assinar() {
       {!!erro && <Text style={s.erro}>{erro}</Text>}
 
       <Botao variante="texto" titulo="Tenho um código de acesso" onPress={() => router.push('/codigo')} />
+      <Botao variante="texto" titulo="Dúvidas sobre o app? Veja os vídeos" onPress={() => router.push('/duvidas')} />
       <Botao variante="texto" titulo="Já assino ou sou da Mesa / do Plano: verificar acesso" onPress={atualizarAcesso} />
       {LOJA_DISPONIVEL && <Botao variante="texto" titulo="Restaurar compras" onPress={restaurar} />}
       {emTeste && <Botao variante="texto" titulo="Continuar no teste grátis" onPress={() => router.replace('/(tabs)')} />}

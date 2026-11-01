@@ -75,6 +75,7 @@ export default function RootLayout() {
           <Stack.Screen name="detox/dia/[n]" options={{ title: 'Detox Digital' }} />
           <Stack.Screen name="detox/pausa" options={{ title: 'Pausa do impulso', presentation: 'modal' }} />
           <Stack.Screen name="detox/concluido" options={{ title: 'Trilha concluída' }} />
+          <Stack.Screen name="duvidas" options={{ title: 'Dúvidas frequentes' }} />
           <Stack.Screen name="exportar" options={{ title: 'Exportar diário', presentation: 'modal' }} />
         </Stack>
       </AuthProvider>

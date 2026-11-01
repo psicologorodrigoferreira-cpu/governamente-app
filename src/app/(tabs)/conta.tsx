@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Alert, Linking, Platform } from 'react-native';
+import { Alert, Linking, Platform, Text } from 'react-native';
 import { router } from 'expo-router';
 import { Botao, Cartao, Legenda, Subtitulo, Tela, Texto, Titulo } from '@/components/ui';
 import { useAuth } from '@/lib/auth';
 import { diasRestantes, linkGerenciarAssinatura, LOJA_DISPONIVEL, restaurarCompras } from '@/lib/assinatura';
-import { cores } from '@/lib/theme';
+import { cores, fontes } from '@/lib/theme';
 import { souAdmin } from '@/lib/admin';
 
 const ORIGEM: Record<string, string> = {
@@ -97,9 +97,16 @@ export default function Conta() {
         <Botao variante="texto" titulo="Refazer os primeiros passos" onPress={() => router.push('/primeiros-passos')} />
       </Cartao>
 
+      <Cartao onPress={() => router.push('/duvidas')} rotulo="Abrir as dúvidas frequentes em vídeo" style={{ borderColor: cores.ambar }}>
+        <Legenda style={{ color: cores.ambarTerra }}>AJUDA EM VÍDEO</Legenda>
+        <Subtitulo>Dúvidas frequentes</Subtitulo>
+        <Texto>Vídeos curtos que mostram, passo a passo, como usar cada parte do app.</Texto>
+        <Text style={{ fontFamily: fontes.textoForte, fontSize: 15, color: cores.ambarTerra }}>Assistir →</Text>
+      </Cartao>
+
       <Cartao>
         <Subtitulo>Fale com a gente</Subtitulo>
-        <Texto>Dúvidas sobre o app ou a assinatura.</Texto>
+        <Texto>Não achou nos vídeos? Mande sua dúvida sobre o app ou a assinatura.</Texto>
         <Botao
           variante="secundario"
           titulo="Enviar e-mail"

@@ -12,18 +12,22 @@ import { WebView } from 'react-native-webview';
  */
 const ORIGEM = 'https://app.governamente.com.br';
 
+/** `id` de um vídeo, ou `playlist:<id da playlist>` para tocar a playlist inteira. */
 function urlDoVideo(id: string) {
+  const ehPlaylist = id.startsWith('playlist:');
   const params = new URLSearchParams({
+    ...(ehPlaylist ? { list: id.slice('playlist:'.length) } : {}),
     rel: '0',
     modestbranding: '1',
     playsinline: '1',
     origin: ORIGEM,
     widget_referrer: ORIGEM,
   });
-  return `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?${params.toString()}`;
+  const caminho = ehPlaylist ? 'videoseries' : encodeURIComponent(id);
+  return `https://www.youtube-nocookie.com/embed/${caminho}?${params.toString()}`;
 }
 
-function paginaDoVideo(id: string) {
+function paginaDoVideo(id: string, titulo: string) {
   return `<!DOCTYPE html>
 <html><head>
 <meta charset="utf-8">
@@ -31,19 +35,20 @@ function paginaDoVideo(id: string) {
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <style>html,body{margin:0;padding:0;height:100%;background:#000;overflow:hidden}iframe{position:absolute;inset:0;width:100%;height:100%;border:0}</style>
 </head><body>
-<iframe src="${urlDoVideo(id)}" title="Aula em vídeo"
+<iframe src="${urlDoVideo(id)}" title="${titulo.replace(/"/g, '')}"
   allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen"
   referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 </body></html>`;
 }
 
-export function VideoYouTube({ id }: { id: string }) {
+export function VideoYouTube({ id, titulo = 'Aula em vídeo' }: { id: string; titulo?: string }) {
   return (
     <View style={{ width: '100%', aspectRatio: 16 / 9, borderRadius: 16, overflow: 'hidden', backgroundColor: '#000' }}>
       {Platform.OS === 'web' ? (
         React.createElement('iframe', {
+          key: id,
           src: urlDoVideo(id),
-          title: 'Aula em vídeo',
+          title: titulo,
           style: { width: '100%', height: '100%', border: 0 },
           allow: 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen',
           referrerPolicy: 'strict-origin-when-cross-origin',
@@ -51,7 +56,8 @@ export function VideoYouTube({ id }: { id: string }) {
         })
       ) : (
         <WebView
-          source={{ html: paginaDoVideo(id), baseUrl: ORIGEM }}
+          key={id}
+          source={{ html: paginaDoVideo(id, titulo), baseUrl: ORIGEM }}
           originWhitelist={['*']}
           allowsFullscreenVideo
           allowsInlineMediaPlayback

@@ -22,6 +22,7 @@ import {
 } from '@/lib/admin';
 import { cores, espaco, fontes, raio } from '@/lib/theme';
 import { AbaAgenda, AbaMesa } from '@/components/PainelAgendaMesa';
+import { lerConfiguracoes, salvarConfiguracao } from '@/lib/ecossistema';
 
 type Aba = 'numeros' | 'assinantes' | 'testadores' | 'aulas' | 'codigos' | 'agenda' | 'mesa';
 
@@ -399,6 +400,7 @@ function Aulas() {
 
   return (
     <View style={{ gap: espaco.s }}>
+      <PlaylistDuvidas />
       <Botao titulo="+ Nova aula" onPress={() => abrir({ ...VAZIA, ordem: (lista.at(-1)?.ordem ?? 0) + 10 })} />
       {lista.map((a) => (
         <Cartao key={a.id} onPress={() => abrir(a)} rotulo={`Editar ${a.titulo}`}>
@@ -412,6 +414,59 @@ function Aulas() {
         </Cartao>
       ))}
     </View>
+  );
+}
+
+/** Link da playlist de dúvidas frequentes que toca na tela Dúvidas frequentes. */
+function PlaylistDuvidas() {
+  const [valor, setValor] = useState('');
+  const [salvando, setSalvando] = useState(false);
+  const [salvo, setSalvo] = useState(false);
+  useEffect(() => {
+    lerConfiguracoes()
+      .then((c) => setValor(c.faq_playlist ? `https://www.youtube.com/playlist?list=${c.faq_playlist}` : ''))
+      .catch(() => {});
+  }, []);
+
+  async function salvar() {
+    const v = valor.trim();
+    const id = v.match(/[?&]list=([A-Za-z0-9_-]+)/)?.[1] ?? (/^[A-Za-z0-9_-]{10,}$/.test(v) ? v : '');
+    if (v && !id) {
+      Alert.alert('Link não reconhecido', 'Cole o link da playlist, que tem "list=" no endereço.');
+      return;
+    }
+    setSalvando(true);
+    try {
+      await salvarConfiguracao('faq_playlist', id);
+      setSalvo(true);
+    } catch {
+      Alert.alert('Não foi possível salvar');
+    } finally {
+      setSalvando(false);
+    }
+  }
+
+  return (
+    <Cartao>
+      <Legenda>DÚVIDAS FREQUENTES</Legenda>
+      <Texto style={{ fontSize: 14 }}>
+        Playlist que toca na tela Dúvidas frequentes. Vídeos novos que você colocar nela aparecem sozinhos no app. Deixe vazio para usar a
+        playlist padrão.
+      </Texto>
+      <Campo
+        rotulo="Link da playlist no YouTube"
+        value={valor}
+        onChangeText={(t) => {
+          setValor(t);
+          setSalvo(false);
+        }}
+        autoCapitalize="none"
+        autoCorrect={false}
+        placeholder="https://www.youtube.com/playlist?list=..."
+      />
+      <Botao variante="secundario" titulo={salvo ? 'Salvo ✓' : 'Salvar playlist'} onPress={salvar} carregando={salvando} />
+      <Botao variante="texto" titulo="Ver a tela Dúvidas frequentes" onPress={() => router.push('/duvidas')} />
+    </Cartao>
   );
 }
 

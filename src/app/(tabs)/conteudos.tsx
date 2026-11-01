@@ -43,6 +43,10 @@ export default function Conteudos() {
           <Text style={s.atalhoTitulo}>Minha evolução</Text>
           <Text style={s.atalhoTexto}>Gráficos e resumo do mês</Text>
         </Cartao>
+        <Cartao onPress={() => router.push('/duvidas')} rotulo="Dúvidas frequentes em vídeo" style={s.atalho}>
+          <Text style={s.atalhoTitulo}>Dúvidas frequentes</Text>
+          <Text style={s.atalhoTexto}>Como usar cada parte do app</Text>
+        </Cartao>
       </View>
 
       <Subtitulo>Aulas</Subtitulo>
