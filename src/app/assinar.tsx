@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Linking, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { Botao, Cartao, Destaque, Legenda, Logo, Tela, Texto, Titulo } from '@/components/ui';
+import { RelatorioTravessia } from '@/components/relatorio';
 import { useAuth } from '@/lib/auth';
 import {
   assinar,
@@ -114,6 +115,8 @@ export default function Assinar() {
           </Texto>
         )}
       </View>
+
+      {(testeAcabou || (emTeste && dias <= 2)) && <RelatorioTravessia />}
 
       <Cartao>
         {INCLUI.map((i) => (

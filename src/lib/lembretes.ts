@@ -7,6 +7,7 @@ import * as Notifications from 'expo-notifications';
 import { AndroidImportance } from 'expo-notifications';
 import { lerLocal, gravarLocal } from './dados';
 import type { Acesso } from './assinatura';
+import { AVISOS_MANHA, AVISOS_NOITE } from '@/content/rituais';
 
 export const LEMBRETES_DISPONIVEIS = Platform.OS !== 'web';
 
@@ -24,19 +25,10 @@ export const PADRAO: ConfigLembretes = {
   teste: { ativo: true },
 };
 
-/** Uma prática do livro para cada dia da semana (1 = domingo). */
-const PRATICAS: { titulo: string; corpo: string; url: string }[] = [
-  { titulo: 'Domingo: check-in da semana', corpo: 'Cinco perguntas para ver como você chegou até aqui.', url: '/checkin' },
-  { titulo: 'Seu passo possível de hoje', corpo: 'Uma estação da trilha, no seu ritmo. Leva poucos minutos.', url: '/(tabs)/trilha' },
-  { titulo: 'Respiro 4–6', corpo: 'Dois minutos para baixar a tensão antes de começar o dia.', url: '/respirar' },
-  { titulo: 'O que está gritando mais alto?', corpo: 'Separe o urgente do importante na Matriz.', url: '/matriz' },
-  { titulo: 'Cinco minutos de silêncio', corpo: 'Uma meditação curta para ouvir o que você sente.', url: '/meditar' },
-  { titulo: 'Foco com pausa', corpo: '25 minutos de foco, 5 de respiro. Experimente o Pomodoro hoje.', url: '/pomodoro' },
-  { titulo: 'Três gratidões', corpo: 'O que esta semana teve de bom? Anote três coisas.', url: '/gratidao' },
-];
 
 const ID = {
   diario: 'gm-diario',
+  noite: (d: number) => `gm-noite-${d}`,
   checkin: 'gm-checkin',
   pratica: (d: number) => `gm-pratica-${d}`,
   teste2d: 'gm-teste-2d',
@@ -89,16 +81,21 @@ async function cancelar(ids: string[]) {
 export async function aplicarLembretes(c: ConfigLembretes, acesso?: Acesso) {
   if (!LEMBRETES_DISPONIVEIS) return;
   const permitido = (await Notifications.getPermissionsAsync()).granted;
-  await cancelar([ID.diario, ID.checkin, ID.teste2d, ID.testeFim, ...[1, 2, 3, 4, 5, 6, 7].map(ID.pratica)]);
+  const semana = [1, 2, 3, 4, 5, 6, 7];
+  await cancelar([ID.diario, ID.checkin, ID.teste2d, ID.testeFim, ...semana.map(ID.pratica), ...semana.map(ID.noite)]);
   if (!permitido) return;
   const canal = Platform.OS === 'android' ? { channelId: 'lembretes' } : {};
 
+  // Noite: convite para o Fechamento do dia (texto diferente a cada dia da semana).
   if (c.diario.ativo) {
-    await Notifications.scheduleNotificationAsync({
-      identifier: ID.diario,
-      content: { title: 'Como foi o seu dia?', body: 'Registre uma situação no Diário das Emoções.', data: { url: '/diario-novo' } },
-      trigger: { type: Notifications.SchedulableTriggerInputTypes.DAILY, hour: c.diario.hora, minute: c.diario.minuto, ...canal },
-    });
+    for (let d = 1; d <= 7; d++) {
+      const a = AVISOS_NOITE[d - 1];
+      await Notifications.scheduleNotificationAsync({
+        identifier: ID.noite(d),
+        content: { title: a.titulo, body: a.corpo, data: { url: '/ritual?p=noite' } },
+        trigger: { type: Notifications.SchedulableTriggerInputTypes.WEEKLY, weekday: d, hour: c.diario.hora, minute: c.diario.minuto, ...canal },
+      });
+    }
   }
   if (c.checkin.ativo) {
     await Notifications.scheduleNotificationAsync({
@@ -107,13 +104,13 @@ export async function aplicarLembretes(c: ConfigLembretes, acesso?: Acesso) {
       trigger: { type: Notifications.SchedulableTriggerInputTypes.WEEKLY, weekday: 1, hour: 10, minute: 0, ...canal },
     });
   }
+  // Manhã: convite para o Norte da manhã (texto diferente a cada dia da semana).
   if (c.pratica.ativo) {
     for (let d = 1; d <= 7; d++) {
-      if (d === 1 && c.checkin.ativo) continue; // domingo já tem o check-in
-      const p = PRATICAS[d - 1];
+      const a = AVISOS_MANHA[d - 1];
       await Notifications.scheduleNotificationAsync({
         identifier: ID.pratica(d),
-        content: { title: p.titulo, body: p.corpo, data: { url: p.url } },
+        content: { title: a.titulo, body: a.corpo, data: { url: '/ritual?p=manha' } },
         trigger: {
           type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
           weekday: d,

@@ -57,11 +57,11 @@ export default function Lembretes() {
 
   return (
     <Tela>
-      <Texto>Pequenos avisos para manter a constância. Nada de excesso: no máximo um por dia de cada tipo.</Texto>
+      <Texto>Pequenos avisos para manter a constância. Nada de excesso: um de manhã, um à noite e o check-in de domingo.</Texto>
 
       <Linha
-        titulo="Prática do dia"
-        texto="Uma prática curta do livro, diferente a cada dia da semana."
+        titulo="Manhã · Norte do dia"
+        texto="Convite para o ritual da manhã: como você acordou e o seu passo possível."
         ativo={c.pratica.ativo}
         onChange={(v) => mudar({ ...c, pratica: { ...c.pratica, ativo: v } })}
       >
@@ -73,8 +73,8 @@ export default function Lembretes() {
       </Linha>
 
       <Linha
-        titulo="Diário das Emoções"
-        texto="Um convite para registrar uma situação do dia."
+        titulo="Noite · Fechamento do dia"
+        texto="Convite para fechar o dia: se cumpriu o passo e uma coisa boa."
         ativo={c.diario.ativo}
         onChange={(v) => mudar({ ...c, diario: { ...c.diario, ativo: v } })}
       >

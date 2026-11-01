@@ -12,6 +12,8 @@ import { cores, espaco, fontes } from '@/lib/theme';
 import { Marcadores } from '@/components/detox';
 import { DETOX } from '@/content/detox';
 import { EstadoDetox, estadoDetox, listarDetox } from '@/lib/detox';
+import { CartaoRituais } from '@/components/rituais';
+import { EstadoRituais, estadoRituais, listarRituais } from '@/lib/rituais';
 
 function saudacao() {
   const h = new Date().getHours();
@@ -29,6 +31,7 @@ export default function Home() {
   const [aoVivo, setAoVivo] = useState<Ocorrencia | null>(null);
   const [tripulante, setTripulante] = useState(false);
   const [detox, setDetox] = useState<EstadoDetox | null>(null);
+  const [rituais, setRituais] = useState<EstadoRituais | null>(null);
   const verificouPerfil = useRef(false);
 
   useFocusEffect(
@@ -52,6 +55,9 @@ export default function Home() {
             .then((ev) => setAoVivo(proximasOcorrencias(ev, 7)[0] ?? null))
             .catch(() => {});
           souTripulante().then(setTripulante).catch(() => {});
+          listarRituais()
+            .then((l) => setRituais(estadoRituais(l)))
+            .catch(() => setRituais(estadoRituais([])));
           listarDetox()
             .then((l) => setDetox(estadoDetox(l)))
             .catch(() => setDetox(estadoDetox([])));
@@ -85,6 +91,16 @@ export default function Home() {
         {primeiroNome ? `, ${primeiroNome}` : ''}.{'\n'}
         <Destaque>Qual é o passo possível hoje?</Destaque>
       </Titulo>
+
+      {rituais && <CartaoRituais e={rituais} />}
+
+      {emTeste && dias <= 2 && (
+        <Cartao onPress={() => router.push('/travessia')} rotulo="Ver o que você já construiu no app" style={s.teste}>
+          <Legenda style={{ color: cores.ambarTerra }}>SUA TRAVESSIA ATÉ AQUI</Legenda>
+          <Text style={s.testeTitulo}>Veja o que você já construiu nestes dias</Text>
+          <Text style={s.testeLink}>Abrir o meu resumo →</Text>
+        </Cartao>
+      )}
 
       {detox && !detox.terminou && (
         <Cartao escuro onPress={() => router.push('/detox')} rotulo="Abrir a trilha Detox Digital" style={{ gap: espaco.m }}>
