@@ -1,0 +1,189 @@
+[
+ {
+  "id": "arquetipos",
+  "categoria": "personalidade",
+  "titulo": "Os 12 Arquétipos",
+  "tempo": "10 min",
+  "resumo": "Quais padrões internos, como o Cuidador, o Herói ou o Sábio, estão mais ativos em você neste momento da vida.",
+  "modo": "ranking",
+  "escala": "conc",
+  "cuidado": false,
+  "n": 60
+ },
+ {
+  "id": "amabilidade",
+  "categoria": "personalidade",
+  "titulo": "Amabilidade",
+  "tempo": "3 min",
+  "resumo": "Como você equilibra cuidado com o outro, cooperação e confiança nas relações.",
+  "modo": "neutro",
+  "escala": "conc",
+  "cuidado": false,
+  "n": 12
+ },
+ {
+  "id": "estabilidade",
+  "categoria": "personalidade",
+  "titulo": "Estabilidade Emocional",
+  "tempo": "3 min",
+  "resumo": "Como você lida com pressão, imprevistos e oscilações de humor.",
+  "modo": "neutro",
+  "escala": "conc",
+  "cuidado": false,
+  "n": 12
+ },
+ {
+  "id": "conscienciosidade",
+  "categoria": "personalidade",
+  "titulo": "Conscienciosidade",
+  "tempo": "3 min",
+  "resumo": "Seu jeito de organizar, sustentar a disciplina e cumprir o que combina.",
+  "modo": "neutro",
+  "escala": "conc",
+  "cuidado": false,
+  "n": 12
+ },
+ {
+  "id": "abertura",
+  "categoria": "personalidade",
+  "titulo": "Abertura a Experiências",
+  "tempo": "3 min",
+  "resumo": "Sua curiosidade, imaginação e disposição para o novo.",
+  "modo": "neutro",
+  "escala": "conc",
+  "cuidado": false,
+  "n": 12
+ },
+ {
+  "id": "extroversao",
+  "categoria": "personalidade",
+  "titulo": "Introversão x Extroversão",
+  "tempo": "3 min",
+  "resumo": "Onde você ganha e gasta energia: no convívio com muita gente ou no recolhimento.",
+  "modo": "neutro",
+  "escala": "conc",
+  "cuidado": false,
+  "n": 12
+ },
+ {
+  "id": "linguagens",
+  "categoria": "personalidade",
+  "titulo": "Linguagens do Amor",
+  "tempo": "4 min",
+  "resumo": "De que forma você mais se sente amado(a) e cuidado(a) nas relações.",
+  "modo": "ranking",
+  "escala": "conc",
+  "cuidado": false,
+  "n": 15
+ },
+ {
+  "id": "necessidades",
+  "categoria": "personalidade",
+  "titulo": "Necessidades Emocionais",
+  "tempo": "4 min",
+  "resumo": "Quais necessidades do seu mundo emocional mais estão pedindo cuidado agora.",
+  "modo": "ranking",
+  "escala": "freq",
+  "cuidado": false,
+  "n": 15
+ },
+ {
+  "id": "apego",
+  "categoria": "personalidade",
+  "titulo": "Estilos de Apego",
+  "tempo": "3 min",
+  "resumo": "Como você lida com proximidade, distância e segurança nos vínculos.",
+  "modo": "apego",
+  "escala": "freq",
+  "cuidado": false,
+  "n": 10
+ },
+ {
+  "id": "inteligencia-emocional",
+  "categoria": "habilidades",
+  "titulo": "Inteligência Emocional",
+  "tempo": "4 min",
+  "resumo": "Como você percebe, regula e usa as emoções, suas e dos outros.",
+  "modo": "pos",
+  "escala": "conc",
+  "cuidado": false,
+  "n": 12
+ },
+ {
+  "id": "habilidade-lideranca",
+  "categoria": "habilidades",
+  "titulo": "Habilidade de Liderança",
+  "tempo": "3 min",
+  "resumo": "O quanto você já domina visão, comunicação, decisão e desenvolvimento de pessoas.",
+  "modo": "pos",
+  "escala": "conc",
+  "cuidado": false,
+  "n": 12
+ },
+ {
+  "id": "estilos-lideranca",
+  "categoria": "habilidades",
+  "titulo": "Estilos de Liderança",
+  "tempo": "3 min",
+  "resumo": "Qual é o seu jeito natural de conduzir pessoas e decisões.",
+  "modo": "ranking",
+  "escala": "conc",
+  "cuidado": false,
+  "n": 15
+ },
+ {
+  "id": "persuasao",
+  "categoria": "habilidades",
+  "titulo": "Poder de Persuasão",
+  "tempo": "3 min",
+  "resumo": "Sua capacidade de comunicar, ler o outro e conduzir pessoas até um acordo.",
+  "modo": "pos",
+  "escala": "conc",
+  "cuidado": false,
+  "n": 12
+ },
+ {
+  "id": "procrastinacao",
+  "categoria": "habilidades",
+  "titulo": "Procrastinação",
+  "tempo": "4 min",
+  "resumo": "Entenda se o que te trava é começar, é o perfeccionismo ou o desconforto emocional.",
+  "modo": "nivel",
+  "escala": "freq",
+  "cuidado": false,
+  "n": 12
+ },
+ {
+  "id": "criatividade",
+  "categoria": "habilidades",
+  "titulo": "Criatividade",
+  "tempo": "3 min",
+  "resumo": "Seu jeito criativo no dia a dia: imaginar possibilidades e transformá-las em algo real.",
+  "modo": "pos",
+  "escala": "freq",
+  "cuidado": false,
+  "n": 8
+ },
+ {
+  "id": "bem-estar",
+  "categoria": "bemestar",
+  "titulo": "Bem-Estar Psicológico",
+  "tempo": "3 min",
+  "resumo": "Um retrato de como estão sua satisfação, seus vínculos, seu propósito e seu autocuidado.",
+  "modo": "pos",
+  "escala": "freq",
+  "cuidado": false,
+  "n": 12
+ },
+ {
+  "id": "ansiedade",
+  "categoria": "saude",
+  "titulo": "Ansiedade Normal x Patológica",
+  "tempo": "4 min",
+  "resumo": "Ajuda a distinguir a ansiedade esperada do dia a dia de uma ansiedade intensa que merece cuidado.",
+  "modo": "nivel",
+  "escala": "freq",
+  "cuidado": true,
+  "n": 12
+ }
+]
