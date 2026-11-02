@@ -54,7 +54,7 @@ export default function RootLayout() {
           <Stack.Screen name="diario-novo" options={{ title: 'Novo registro', presentation: 'modal' }} />
           <Stack.Screen name="checkin" options={{ title: 'Check-in da semana', presentation: 'modal' }} />
           <Stack.Screen name="roda" options={{ title: 'Roda das Emoções' }} />
-          <Stack.Screen name="respirar" options={{ title: 'Respiro 4–6', presentation: 'modal' }} />
+          <Stack.Screen name="respirar" options={{ title: 'Respiro 4-4-8', presentation: 'modal' }} />
           <Stack.Screen name="apoio" options={{ title: 'Apoio agora', presentation: 'modal' }} />
           <Stack.Screen name="privacidade" options={{ title: 'Privacidade' }} />
           <Stack.Screen name="constancia" options={{ title: 'Plano de constância' }} />

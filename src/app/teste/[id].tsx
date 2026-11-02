@@ -205,7 +205,7 @@ function VerResultado({ t, r, onRefazer }: { t: NonNullable<ReturnType<typeof te
             sofrimento intenso ou tiver pensamentos de se machucar, procure ajuda agora: CVV 188 (ligação gratuita, 24 horas) ou SAMU 192.
           </Texto>
           <Botao variante="secundario" titulo="Ver apoio agora" onPress={() => router.push('/apoio')} />
-          <Botao variante="secundario" titulo="Respiro 4–6 (2 minutos)" onPress={() => router.push('/respirar')} />
+          <Botao variante="secundario" titulo="Respiro 4-4-8 (2 minutos)" onPress={() => router.push('/respirar')} />
         </Cartao>
       )}
       <Botao titulo="Registrar o que percebi no diário" onPress={() => router.push('/diario-novo')} />

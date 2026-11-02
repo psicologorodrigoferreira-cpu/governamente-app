@@ -31,7 +31,7 @@ export const EMOCOES: Emocao[] = [
     cor: '#4E6B66',
     intensidades: ['Apreensão', 'Medo', 'Terror'],
     funcao: 'Protege diante de um risco, real ou imaginado.',
-    conduzir: 'Pergunte: qual é o risco real? Separe o fato do "e se". Respire 4–6 antes de decidir.',
+    conduzir: 'Pergunte: qual é o risco real? Separe o fato do "e se". Faça o Respiro 4-4-8 antes de decidir.',
   },
   {
     id: 'surpresa',

@@ -21,7 +21,7 @@ const INCLUI = [
   'Trilha de 15 estações baseada no livro GovernaMente e no método C.A.I.A.',
   'Aulas em vídeo dentro do app',
   'Diário das Emoções com histórico e padrões',
-  'Roda das Emoções e respiro guiado 4–6',
+  'Roda das Emoções e respiro guiado 4-4-8',
   'Check-in semanal para acompanhar sua evolução',
 ];
 

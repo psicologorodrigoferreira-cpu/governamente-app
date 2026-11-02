@@ -1,5 +1,5 @@
 /**
- * Roteiros falados do Respiro 4–6 e da meditação guiada.
+ * Roteiros falados do Respiro 4-4-8 e da meditação guiada.
  *
  * Cada fala tem um `id`. Hoje o app lê o texto com a voz do próprio aparelho.
  * Quando o Rodrigo gravar a própria voz, basta colocar o arquivo em
@@ -10,25 +10,25 @@
 export type Fala = { id: string; texto: string };
 export type FalaNoTempo = Fala & { em: number }; // segundos desde o início
 
-// ---------------- Respiro 4–6 ----------------
+// ---------------- Respiro 4-4-8 ----------------
+// Respiração diafragmática: inspira pelo nariz em 4, segura 4, solta pela boca em 8. Cinco ciclos.
 export const RESPIRO = {
   abertura: {
-    id: 'respiro-abertura',
-    texto: 'Vamos respirar juntos por dois minutos. Sente-se, solte os ombros e leve o ar para a barriga.',
+    id: 'respiro448-abertura',
+    texto:
+      'Vamos respirar juntos. Sente-se ou deite-se de forma confortável, com os ombros relaxados. Coloque uma mão sobre o peito e a outra na barriga, perto do umbigo.',
   },
-  inspire: { id: 'respiro-inspire', texto: 'Inspire' },
-  segure: { id: 'respiro-segure', texto: 'Segure' },
-  solte: { id: 'respiro-solte', texto: 'Solte devagar' },
-  // Lembretes que entram no lugar do comando, em ciclos específicos (o ciclo 1 é o primeiro).
+  inspire: { id: 'respiro448-inspire', texto: 'Inspire pelo nariz' },
+  segure: { id: 'respiro448-segure', texto: 'Segure' },
+  solte: { id: 'respiro448-solte', texto: 'Solte pela boca, devagar' },
+  // Lembretes falados durante a pausa (no lugar de "Segure"), em ciclos específicos (o ciclo 1 é o primeiro).
   lembretes: {
-    4: { id: 'respiro-lembrete-ombros', texto: 'Continue no seu ritmo. Ombros soltos.' },
-    7: { id: 'respiro-lembrete-barriga', texto: 'Perceba a barriga subindo e descendo.' },
-    10: { id: 'respiro-lembrete-gentileza', texto: 'Se a mente fugir, tudo bem. Volte para o ar.' },
+    2: { id: 'respiro448-lembrete-maos', texto: 'A mão da barriga sobe. A do peito quase não se mexe.' },
+    3: { id: 'respiro448-lembrete-vela', texto: 'Ao soltar, sopre devagar, como se fosse apagar uma vela.' },
+    4: { id: 'respiro448-lembrete-ombros', texto: 'Ombros soltos. Sem forçar.' },
   } as Record<number, Fala>,
-  // Depois deste ciclo a voz para de dar o comando e ficam só os sons, para não cansar.
-  ciclosComVoz: 3,
   fechamento: {
-    id: 'respiro-fechamento',
+    id: 'respiro448-fechamento',
     texto: 'Pronto. Repare como o corpo está agora. Qual é o próximo passo possível?',
   },
 };

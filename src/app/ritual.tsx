@@ -178,11 +178,11 @@ export default function RitualTela() {
   );
 }
 
-/** Três respirações 4–6 guiadas pelo círculo (cerca de 30 segundos). */
+/** Três respirações 4-4-8 guiadas pelo círculo (inspira 4, segura 4, solta 8: cerca de 50 segundos). */
 function Respiro({ onFim }: { onFim: () => void }) {
   const [escala] = useState(() => new Animated.Value(0.55));
   const [ciclo, setCiclo] = useState(0);
-  const [fase, setFase] = useState<'inspire' | 'solte'>('inspire');
+  const [fase, setFase] = useState<'inspire' | 'segure' | 'solte'>('inspire');
   const [rodando, setRodando] = useState(false);
 
   useEffect(() => {
@@ -199,10 +199,14 @@ function Respiro({ onFim }: { onFim: () => void }) {
       setFase('inspire');
       Animated.timing(escala, { toValue: 1, duration: 4000, easing: Easing.inOut(Easing.quad), useNativeDriver: true }).start(() => {
         if (!vivo) return;
-        setFase('solte');
-        Animated.timing(escala, { toValue: 0.55, duration: 6000, easing: Easing.inOut(Easing.quad), useNativeDriver: true }).start(() =>
-          rodar(n + 1),
-        );
+        setFase('segure');
+        setTimeout(() => {
+          if (!vivo) return;
+          setFase('solte');
+          Animated.timing(escala, { toValue: 0.55, duration: 8000, easing: Easing.inOut(Easing.quad), useNativeDriver: true }).start(() =>
+            rodar(n + 1),
+          );
+        }, 4000);
       });
     };
     rodar(0);
@@ -216,11 +220,13 @@ function Respiro({ onFim }: { onFim: () => void }) {
   return (
     <>
       <Titulo>Três respirações</Titulo>
-      <Texto style={{ color: cores.grafiteSuave }}>Inspire em 4, solte em 6. O corpo entende que pode desacelerar.</Texto>
+      <Texto style={{ color: cores.grafiteSuave }}>
+        Uma mão no peito e a outra na barriga. Inspire pelo nariz em 4, segure 4 e solte pela boca em 8, como se soprasse uma vela.
+      </Texto>
       <View style={s.respiroArea}>
         <Animated.View style={[s.circulo, { transform: [{ scale: escala }] }]} />
         <View style={s.respiroTexto}>
-          <Text style={s.fase}>{!rodando && ciclo === 0 ? 'Pronto?' : terminou ? 'Muito bem' : fase === 'inspire' ? 'Inspire' : 'Solte devagar'}</Text>
+          <Text style={s.fase}>{!rodando && ciclo === 0 ? 'Pronto?' : terminou ? 'Muito bem' : fase === 'inspire' ? 'Inspire pelo nariz' : fase === 'segure' ? 'Segure' : 'Solte pela boca'}</Text>
           {rodando && <Legenda style={{ color: cores.areia }}>{ciclo} de {CICLOS}</Legenda>}
         </View>
       </View>

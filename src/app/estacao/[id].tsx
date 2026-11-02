@@ -8,7 +8,7 @@ import { cores, espaco, fontes } from '@/lib/theme';
 
 const ROTA_FERRAMENTA = {
   diario: { rota: '/diario-novo', rotulo: 'Abrir o Diário das Emoções' },
-  respiracao: { rota: '/respirar', rotulo: 'Praticar o respiro 4–6' },
+  respiracao: { rota: '/respirar', rotulo: 'Praticar o Respiro 4-4-8' },
   roda: { rota: '/roda', rotulo: 'Abrir a Roda das Emoções' },
   pensamento: { rota: '/diario-novo?pensamento=1', rotulo: 'Fazer o registro de pensamento' },
   matriz: { rota: '/matriz', rotulo: 'Abrir a Matriz de prioridades' },

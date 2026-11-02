@@ -34,7 +34,7 @@ export const DUVIDAS: GrupoDuvidas[] = [
       { n: 7, titulo: 'Diário das Emoções', video: '6YSw8LkD9FM', busca: 'registro pensamento' },
       { n: 8, titulo: 'Roda das Emoções', video: 'wSaEWjvl20Q', busca: 'nomear sentimento' },
       { n: 9, titulo: 'Três gratidões', video: '6L8kMi8Ru3U' },
-      { n: 10, titulo: 'Respiro 4–6', video: '3F_PvaQq6zw', busca: 'respiração voz' },
+      { n: 10, titulo: 'Respiro 4-4-8', video: '3F_PvaQq6zw', busca: 'respiração voz' },
       { n: 11, titulo: 'Meditação guiada', video: 'p1q7ysy28_Q' },
       { n: 12, titulo: 'Matriz de prioridades', video: 'v2Opbi-Es68', busca: 'eisenhower urgente importante' },
       { n: 13, titulo: 'Foco com pausa (Pomodoro)', video: 'sCeBWXq2q2Q' },

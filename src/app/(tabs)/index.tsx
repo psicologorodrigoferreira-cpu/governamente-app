@@ -186,7 +186,7 @@ export default function Home() {
           texto={detox?.terminou ? 'Tempo de tela e revisão' : `${detox?.concluidos.length ?? 0} de 5 dias`}
           onPress={() => router.push('/detox')}
         />
-        <Atalho titulo="Respiro 4–6" texto="2 minutos para baixar a tensão" onPress={() => router.push('/respirar')} />
+        <Atalho titulo="Respiro 4-4-8" texto="5 respirações para baixar a tensão" onPress={() => router.push('/respirar')} />
         <Atalho titulo="Meditação" texto="5 minutos de silêncio guiado" onPress={() => router.push('/meditar')} />
         <Atalho titulo="Registrar emoção" texto={`${registrosSemana} registro(s) nesta semana`} onPress={() => router.push('/diario-novo')} />
         <Atalho titulo="Roda das Emoções" texto="Dê nome ao que sente" onPress={() => router.push('/roda')} />

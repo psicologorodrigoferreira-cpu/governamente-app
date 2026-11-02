@@ -1,4 +1,4 @@
-/** Voz guiada e sons do Respiro 4–6 e da meditação. */
+/** Voz guiada e sons do Respiro 4-4-8 e da meditação. */
 import * as Speech from 'expo-speech';
 import { AudioPlayer, createAudioPlayer, setAudioModeAsync } from 'expo-audio';
 import { gravarLocal, lerLocal } from './dados';

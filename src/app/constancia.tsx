@@ -7,7 +7,7 @@ import { cores, espaco, fontes } from '@/lib/theme';
 
 // Cap. 12 do livro: associar o hábito novo a uma rotina que você já tem.
 const ANCORAS = ['Depois do café da manhã', 'Ao chegar no trabalho', 'Depois do almoço', 'Antes de dormir'];
-const PRATICAS = ['Três gratidões', 'Respiro 4–6', 'Cinco minutos de meditação', 'Um registro no diário'];
+const PRATICAS = ['Três gratidões', 'Respiro 4-4-8', 'Cinco minutos de meditação', 'Um registro no diário'];
 
 const fmt = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 

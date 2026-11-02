@@ -10,7 +10,7 @@ export const FUNCOES = [
   'Trilha do método',
   'Diário das Emoções',
   'Roda das Emoções',
-  'Respiro 4–6',
+  'Respiro 4-4-8',
   'Meditação guiada',
   'Três gratidões',
   'Matriz de prioridades',
