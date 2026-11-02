@@ -21,7 +21,16 @@ export type Som = keyof typeof SONS;
  * Gravações na voz do Rodrigo, por id da fala (ver src/content/guias.ts).
  * Exemplo: 'respiro-inspire': require('../../assets/voz/respiro-inspire.m4a'),
  */
-const GRAVACOES: Record<string, number> = {};
+const GRAVACOES: Record<string, number> = {
+  'respiro448-abertura': require('../../assets/voz/respiro448-abertura.m4a'),
+  'respiro448-inspire': require('../../assets/voz/respiro448-inspire.m4a'),
+  'respiro448-segure': require('../../assets/voz/respiro448-segure.m4a'),
+  'respiro448-solte': require('../../assets/voz/respiro448-solte.m4a'),
+  'respiro448-lembrete-maos': require('../../assets/voz/respiro448-lembrete-maos.m4a'),
+  'respiro448-lembrete-vela': require('../../assets/voz/respiro448-lembrete-vela.m4a'),
+  'respiro448-lembrete-ombros': require('../../assets/voz/respiro448-lembrete-ombros.m4a'),
+  'respiro448-fechamento': require('../../assets/voz/respiro448-fechamento.m4a'),
+};
 
 /** Não deixa uma chamada do sistema travar a prática: desiste depois de `ms`. */
 function comLimite<T>(p: Promise<T>, ms: number, padrao: T): Promise<T> {

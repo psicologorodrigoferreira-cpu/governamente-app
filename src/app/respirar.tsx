@@ -65,10 +65,13 @@ export default function Respirar() {
     const f = FASES[fase];
     const p = prefsRef.current;
     if (p.sons && f.som) tocar(f.som, 0.5);
+    let atraso: ReturnType<typeof setTimeout> | undefined;
     if (p.voz) {
       // Na pausa de alguns ciclos, um lembrete curto entra no lugar de "Segure".
       const lembrete = fase === 1 ? RESPIRO.lembretes[ciclo] : undefined;
-      falar(lembrete ?? f.fala);
+      // Depois de um lembrete (que pode passar um pouco dos 4 s), o "Solte" espera 1 s para não falar por cima.
+      if (fase === 2 && RESPIRO.lembretes[ciclo]) atraso = setTimeout(() => falar(f.fala), 1000);
+      else falar(lembrete ?? f.fala);
     }
     Animated.timing(escala, {
       toValue: f.escala,
@@ -91,6 +94,7 @@ export default function Respirar() {
     return () => {
       clearTimeout(t);
       clearInterval(conta);
+      if (atraso) clearTimeout(atraso);
     };
   }, [etapa, fase, ciclo, escala]);
 
