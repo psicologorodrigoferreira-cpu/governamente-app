@@ -107,6 +107,20 @@ export default function Evolucao() {
       </Titulo>
       <Texto>Um olhar para o caminho feito. Não é nota: é para você perceber padrões e reconhecer o que mudou.</Texto>
 
+      {checkins.length === 0 && diario.length === 0 && gratidao.length === 0 && constancia.length === 0 && estacoes === 0 && (
+        <Cartao style={{ borderColor: cores.ambar }}>
+          <Legenda style={{ color: cores.ambarTerra }}>COMO ESTA TELA SE PREENCHE</Legenda>
+          <Texto>
+            Ainda não há nada aqui, e isso é normal no começo. Esta tela junta o que você faz no resto do app: o check-in semanal vira o
+            gráfico, os registros do Diário mostram as emoções mais presentes, e a trilha, as gratidões e o plano de constância entram no
+            resumo do mês.
+          </Texto>
+          <Texto style={{ color: cores.grafiteSuave }}>Faça o primeiro check-in. Do segundo em diante, o gráfico aparece.</Texto>
+          <Botao titulo="Fazer o primeiro check-in" onPress={() => router.push('/checkin')} />
+          <Botao variante="secundario" titulo="Registrar uma emoção" onPress={() => router.push('/diario-novo')} />
+        </Cartao>
+      )}
+
       <Subtitulo>Check-ins ao longo do tempo</Subtitulo>
       <View style={s.chips}>
         {METRICAS.map((m) => (

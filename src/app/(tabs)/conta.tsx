@@ -94,6 +94,7 @@ export default function Conta() {
         <Subtitulo>Preferências</Subtitulo>
         <Botao variante="secundario" titulo="Lembretes" onPress={() => router.push('/lembretes')} />
         <Botao variante="secundario" titulo="Tenho um código de acesso" onPress={() => router.push('/codigo')} />
+        <Botao variante="secundario" titulo="Como o método funciona" onPress={() => router.push('/como-funciona?rever=1')} />
         <Botao variante="texto" titulo="Refazer os primeiros passos" onPress={() => router.push('/primeiros-passos')} />
       </Cartao>
 

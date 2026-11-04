@@ -66,6 +66,7 @@ export default function RootLayout() {
           <Stack.Screen name="codigo" options={{ title: 'Código de acesso', presentation: 'modal' }} />
           <Stack.Screen name="lembretes" options={{ title: 'Lembretes' }} />
           <Stack.Screen name="primeiros-passos" options={{ headerShown: false }} />
+          <Stack.Screen name="como-funciona" options={{ title: 'Como o método funciona' }} />
           <Stack.Screen name="testes" options={{ title: 'Testes' }} />
           <Stack.Screen name="teste/[id]" options={{ title: 'Teste' }} />
           <Stack.Screen name="agenda" options={{ title: 'Agenda ao vivo' }} />

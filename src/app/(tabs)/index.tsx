@@ -14,6 +14,7 @@ import { DETOX } from '@/content/detox';
 import { EstadoDetox, estadoDetox, listarDetox } from '@/lib/detox';
 import { CartaoRituais } from '@/components/rituais';
 import { EstadoRituais, estadoRituais, listarRituais } from '@/lib/rituais';
+import { CHAVE_RESPIRO_FEITO, CHAVE_VIU_TOUR } from '@/content/comoFunciona';
 
 function saudacao() {
   const h = new Date().getHours();
@@ -32,6 +33,9 @@ export default function Home() {
   const [tripulante, setTripulante] = useState(false);
   const [detox, setDetox] = useState<EstadoDetox | null>(null);
   const [rituais, setRituais] = useState<EstadoRituais | null>(null);
+  const [respiroFeito, setRespiroFeito] = useState(false);
+  const [temDiario, setTemDiario] = useState(false);
+  const [carregou, setCarregou] = useState(false);
   const verificouPerfil = useRef(false);
 
   useFocusEffect(
@@ -40,6 +44,11 @@ export default function Home() {
         try {
           if (!verificouPerfil.current) {
             verificouPerfil.current = true;
+            // Primeiríssimo acesso: o guia do método antes de tudo.
+            if (!(await lerLocal(CHAVE_VIU_TOUR, false))) {
+              router.replace('/como-funciona');
+              return;
+            }
             const perfil = await lerPerfil();
             // Primeira vez no app: três perguntas para indicar por onde começar.
             if (!perfil) {
@@ -61,13 +70,19 @@ export default function Home() {
           listarDetox()
             .then((l) => setDetox(estadoDetox(l)))
             .catch(() => setDetox(estadoDetox([])));
+          lerLocal(CHAVE_RESPIRO_FEITO, false)
+            .then(setRespiroFeito)
+            .catch(() => {});
           const [c, ck, d] = await Promise.all([listarConcluidas(), listarCheckins(), listarDiario()]);
           setConcluidas(c);
+          setTemDiario(d.length > 0);
           setCheckinOk(checkinFeitoNaSemana(ck));
           const seteDias = Date.now() - 7 * 864e5;
           setRegistrosSemana(d.filter((r) => new Date(r.criado_em).getTime() > seteDias).length);
         } catch {
           /* mantém a tela com o que houver */
+        } finally {
+          setCarregou(true);
         }
       })();
     }, []),
@@ -78,6 +93,53 @@ export default function Home() {
   const proxima = indicada ?? TRILHA.find((e) => !concluidas.includes(e.id)) ?? TRILHA[TRILHA.length - 1];
   const progresso = concluidas.length / TRILHA.length;
   const primeiroNome = nome.split(' ')[0];
+
+  // "Comece por aqui": três passos, um de cada parte do método. Some quando os três estão feitos.
+  const passos = [
+    {
+      id: 'trilha',
+      feito: concluidas.length > 0,
+      titulo: 'Faça a sua primeira estação da trilha',
+      texto: `“${proxima.titulo}”, ${proxima.minutos} min. É onde você aprende o método.`,
+      botao: 'Abrir a primeira estação',
+      ir: () => router.push(`/estacao/${proxima.id}`),
+    },
+    {
+      id: 'respiro',
+      feito: respiroFeito,
+      titulo: 'Faça um Respiro 4-4-8',
+      texto: 'Um minuto e meio. É a pausa que o método usa quando a emoção sobe.',
+      botao: 'Fazer o Respiro agora',
+      ir: () => router.push('/respirar'),
+    },
+    {
+      id: 'diario',
+      feito: temDiario,
+      titulo: 'Registre uma emoção no Diário',
+      texto: 'O que aconteceu, o que sentiu e o que fez. É assim que você começa a ver seus padrões.',
+      botao: 'Fazer o primeiro registro',
+      ir: () => router.push('/diario-novo'),
+    },
+  ];
+  const feitos = passos.filter((p) => p.feito).length;
+  const pendente = passos.find((p) => !p.feito);
+
+  // Depois dos três: um único próximo passo em destaque.
+  const proximoPasso = !checkinOk
+    ? {
+        rotulo: 'CHECK-IN DA SEMANA',
+        titulo: 'Como você chegou nesta semana?',
+        texto: 'Cinco perguntas rápidas para acompanhar a sua evolução.',
+        botao: 'Fazer o check-in',
+        ir: () => router.push('/checkin'),
+      }
+    : {
+        rotulo: `TRILHA · ${PILARES[proxima.pilar].nome.toUpperCase()}`,
+        titulo: proxima.titulo,
+        texto: `Capítulo ${proxima.capitulo} do livro · ${proxima.minutos} min`,
+        botao: concluidas.length >= TRILHA.length ? 'Rever a última estação' : 'Fazer a estação de hoje',
+        ir: () => router.push(`/estacao/${proxima.id}`),
+      };
 
   return (
     <Tela>
@@ -92,7 +154,46 @@ export default function Home() {
         <Destaque>Qual é o passo possível hoje?</Destaque>
       </Titulo>
 
-      {rituais && <CartaoRituais e={rituais} />}
+      {carregou && pendente ? (
+        <Cartao escuro style={{ gap: espaco.m }}>
+          <View style={s.detoxTopo}>
+            <Legenda style={{ color: cores.ambar }}>COMECE POR AQUI</Legenda>
+            <Legenda style={{ color: cores.areia }}>
+              {feitos} DE {passos.length}
+            </Legenda>
+          </View>
+          <Text style={s.tituloEscuro}>Três passos para conhecer o método</Text>
+          {passos.map((p, k) => (
+            <View key={p.id} style={s.passo}>
+              <View style={[s.check, p.feito && s.checkFeito, p === pendente && s.checkAtual]}>
+                <Text style={[s.checkTexto, p.feito && { color: cores.petroleo }]}>{p.feito ? '✓' : k + 1}</Text>
+              </View>
+              <View style={{ flex: 1, gap: 2 }}>
+                <Text style={[s.passoTitulo, p.feito && s.passoFeito]}>{p.titulo}</Text>
+                {p === pendente && <Text style={s.textoEscuro}>{p.texto}</Text>}
+              </View>
+            </View>
+          ))}
+          <Botao titulo={pendente.botao} onPress={pendente.ir} style={s.botaoAmbar} corTexto={cores.petroleo} />
+          <Text style={s.detoxLink} onPress={() => router.push('/como-funciona?rever=1')} accessibilityRole="link">
+            Entender como o método funciona →
+          </Text>
+        </Cartao>
+      ) : carregou ? (
+        <Cartao escuro style={{ gap: espaco.s }}>
+          <Legenda style={{ color: cores.ambar }}>SEU PRÓXIMO PASSO HOJE · {proximoPasso.rotulo}</Legenda>
+          <Text style={s.tituloEscuro}>{proximoPasso.titulo}</Text>
+          <Text style={s.textoEscuro}>{proximoPasso.texto}</Text>
+          {checkinOk && (
+            <Text style={[s.textoEscuro, { fontSize: 13 }]}>
+              {concluidas.length} de {TRILHA.length} estações concluídas
+            </Text>
+          )}
+          <Botao titulo={proximoPasso.botao} onPress={proximoPasso.ir} style={s.botaoAmbar} corTexto={cores.petroleo} />
+        </Cartao>
+      ) : null}
+
+      {!pendente && rituais && <CartaoRituais e={rituais} />}
 
       {emTeste && dias <= 2 && (
         <Cartao onPress={() => router.push('/travessia')} rotulo="Ver o que você já construiu no app" style={s.teste}>
@@ -102,7 +203,7 @@ export default function Home() {
         </Cartao>
       )}
 
-      {detox && !detox.terminou && (
+      {!pendente && detox && !detox.terminou && (
         <Cartao escuro onPress={() => router.push('/detox')} rotulo="Abrir a trilha Detox Digital" style={{ gap: espaco.m }}>
           <View style={s.detoxTopo}>
             <Legenda style={{ color: cores.ambar }}>{detox.concluidos.length === 0 ? 'SUGERIDO PARA VOCÊ' : 'SUA TRILHA EM ANDAMENTO'}</Legenda>
@@ -136,28 +237,22 @@ export default function Home() {
         </Cartao>
       )}
 
-      {!checkinOk && (
-        <Cartao escuro onPress={() => router.push('/checkin')} rotulo="Fazer o check-in da semana">
-          <Legenda style={{ color: cores.salvia }}>CHECK-IN DA SEMANA</Legenda>
-          <Text style={s.tituloEscuro}>Como você chegou nesta semana?</Text>
-          <Text style={s.textoEscuro}>Cinco perguntas rápidas para acompanhar sua evolução.</Text>
+      {!pendente && !checkinOk && (
+        <Cartao onPress={() => router.push(`/estacao/${proxima.id}`)} rotulo={`Continuar a trilha: ${proxima.titulo}`}>
+          <Legenda>
+            {indicada ? 'INDICADA PARA VOCÊ' : concluidas.length === 0 ? 'COMECE A TRILHA' : 'CONTINUE A TRILHA'} ·{' '}
+            {PILARES[proxima.pilar].nome.toUpperCase()}
+          </Legenda>
+          <Subtitulo>{proxima.titulo}</Subtitulo>
+          <Texto style={{ color: cores.grafiteSuave }}>
+            Capítulo {proxima.capitulo} do livro · {proxima.minutos} min
+          </Texto>
+          <Progresso valor={progresso} />
+          <Legenda>
+            {concluidas.length} de {TRILHA.length} estações concluídas
+          </Legenda>
         </Cartao>
       )}
-
-      <Cartao onPress={() => router.push(`/estacao/${proxima.id}`)} rotulo={`Continuar a trilha: ${proxima.titulo}`}>
-        <Legenda>
-          {indicada ? 'COMECE POR AQUI' : concluidas.length === 0 ? 'COMECE A TRILHA' : 'CONTINUE A TRILHA'} ·{' '}
-          {PILARES[proxima.pilar].nome.toUpperCase()}
-        </Legenda>
-        <Subtitulo>{proxima.titulo}</Subtitulo>
-        <Texto style={{ color: cores.grafiteSuave }}>
-          Capítulo {proxima.capitulo} do livro · {proxima.minutos} min
-        </Texto>
-        <Progresso valor={progresso} />
-        <Legenda>
-          {concluidas.length} de {TRILHA.length} estações concluídas
-        </Legenda>
-      </Cartao>
 
       {tripulante && (
         <Cartao escuro onPress={() => router.push('/tripulante')} rotulo="Abrir a Área do Tripulante">
@@ -200,6 +295,16 @@ export default function Home() {
         <Atalho titulo="Lembretes" texto="Escolha quando ser lembrado" onPress={() => router.push('/lembretes')} />
       </View>
 
+      <Cartao style={s.ajuda}>
+        <Legenda style={{ color: cores.ambarTerra }}>COMO O APP FUNCIONA</Legenda>
+        <Text style={s.testeTitulo}>Ficou em dúvida sobre por onde ir?</Text>
+        <Text style={s.testeTexto}>Veja a ideia do método em 2 minutos, ou assista aos vídeos curtos de cada tela.</Text>
+        <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
+          <Botao variante="secundario" titulo="Entender o método" onPress={() => router.push('/como-funciona?rever=1')} style={{ flexGrow: 1 }} />
+          <Botao variante="secundario" titulo="Ver vídeos de ajuda" onPress={() => router.push('/duvidas')} style={{ flexGrow: 1 }} />
+        </View>
+      </Cartao>
+
       <Cartao style={{ backgroundColor: cores.areia }}>
         <Legenda>PERGUNTA DO LIVRO · CAP. 4</Legenda>
         <Text style={s.citacao}>“O que estou sentindo agora? Como isso pode impactar a situação?”</Text>
@@ -240,5 +345,23 @@ const s = StyleSheet.create({
   novoTexto: { fontFamily: fontes.textoForte, fontSize: 11, color: cores.petroleo, letterSpacing: 0.5 },
   detoxTitulo: { fontFamily: fontes.titulo, fontSize: 28, color: cores.areia, lineHeight: 34 },
   detoxLink: { fontFamily: fontes.textoForte, fontSize: 15, color: cores.ambar },
+  passo: { flexDirection: 'row', gap: espaco.s, alignItems: 'flex-start' },
+  check: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    borderWidth: 1.5,
+    borderColor: cores.areia,
+    alignItems: 'center',
+    justifyContent: 'center',
+    opacity: 0.6,
+  },
+  checkAtual: { borderColor: cores.ambar, opacity: 1 },
+  checkFeito: { backgroundColor: cores.ambar, borderColor: cores.ambar, opacity: 1 },
+  checkTexto: { fontFamily: fontes.textoForte, fontSize: 13, color: cores.areia },
+  passoTitulo: { fontFamily: fontes.textoForte, fontSize: 15, color: cores.areia, paddingTop: 3 },
+  passoFeito: { opacity: 0.6, textDecorationLine: 'line-through' },
+  ajuda: { borderColor: cores.ambar },
+  botaoAmbar: { backgroundColor: cores.ambar },
   citacao: { fontFamily: fontes.tituloItalico, fontSize: 19, color: cores.petroleo, lineHeight: 26 },
 });

@@ -467,6 +467,7 @@ function Aulas() {
   return (
     <View style={{ gap: espaco.s }}>
       <PlaylistDuvidas />
+      <VideoComoFunciona />
       <Botao titulo="+ Nova aula" onPress={() => abrir({ ...VAZIA, ordem: (lista.at(-1)?.ordem ?? 0) + 10 })} />
       {lista.map((a) => (
         <Cartao key={a.id} onPress={() => abrir(a)} rotulo={`Editar ${a.titulo}`}>
@@ -532,6 +533,58 @@ function PlaylistDuvidas() {
       />
       <Botao variante="secundario" titulo={salvo ? 'Salvo ✓' : 'Salvar playlist'} onPress={salvar} carregando={salvando} />
       <Botao variante="texto" titulo="Ver a tela Dúvidas frequentes" onPress={() => router.push('/duvidas')} />
+    </Cartao>
+  );
+}
+
+/** Vídeo de boas-vindas que aparece na primeira tela do guia "Como o método funciona". */
+function VideoComoFunciona() {
+  const [valor, setValor] = useState('');
+  const [salvando, setSalvando] = useState(false);
+  const [salvo, setSalvo] = useState(false);
+  useEffect(() => {
+    lerConfiguracoes()
+      .then((c) => setValor(c.video_como_funciona ? `https://youtu.be/${c.video_como_funciona}` : ''))
+      .catch(() => {});
+  }, []);
+
+  async function salvar() {
+    const v = valor.trim();
+    const id = v ? extrairYoutubeId(v) : '';
+    if (v && !id) {
+      Alert.alert('Link não reconhecido', 'Cole o link do vídeo no YouTube.');
+      return;
+    }
+    setSalvando(true);
+    try {
+      await salvarConfiguracao('video_como_funciona', id ?? '');
+      setSalvo(true);
+    } catch {
+      Alert.alert('Não foi possível salvar');
+    } finally {
+      setSalvando(false);
+    }
+  }
+
+  return (
+    <Cartao>
+      <Legenda>VÍDEO DE BOAS-VINDAS</Legenda>
+      <Texto style={{ fontSize: 14 }}>
+        Aparece na primeira tela do guia “Como o método funciona”, que abre no primeiro acesso. Deixe vazio para mostrar só o texto.
+      </Texto>
+      <Campo
+        rotulo="Link do vídeo no YouTube"
+        value={valor}
+        onChangeText={(t) => {
+          setValor(t);
+          setSalvo(false);
+        }}
+        autoCapitalize="none"
+        autoCorrect={false}
+        placeholder="https://youtu.be/..."
+      />
+      <Botao variante="secundario" titulo={salvo ? 'Salvo ✓' : 'Salvar vídeo'} onPress={salvar} carregando={salvando} />
+      <Botao variante="texto" titulo="Ver o guia" onPress={() => router.push('/como-funciona?rever=1')} />
     </Cartao>
   );
 }

@@ -72,8 +72,13 @@ export default function Diario() {
         <Cartao style={{ alignItems: 'center', paddingVertical: espaco.xl }}>
           <Subtitulo style={{ textAlign: 'center' }}>Seu diário está em branco</Subtitulo>
           <Texto style={{ textAlign: 'center', color: cores.grafiteSuave }}>
-            Comece com algo de hoje, mesmo que pareça pequeno.
+            O Diário é a Consciência Emocional na prática. Cada registro tem três partes: a situação (o que aconteceu), a emoção (o que
+            você sentiu e com que força) e a ação (o que você fez). Com alguns registros, você começa a ver o que se repete.
           </Texto>
+          <Texto style={{ textAlign: 'center', color: cores.grafiteSuave }}>
+            Comece com algo de hoje, mesmo que pareça pequeno. Se não souber o nome da emoção, a Roda das Emoções ajuda.
+          </Texto>
+          <Botao variante="secundario" titulo="Abrir a Roda das Emoções" onPress={() => router.push('/roda')} />
         </Cartao>
       )}
 

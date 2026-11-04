@@ -5,6 +5,8 @@ import { ControlesGuia, useGuia } from '@/components/ControlesGuia';
 import { RESPIRO } from '@/content/guias';
 import { falar, silenciar, tocar } from '@/lib/guia';
 import { cores, espaco, fontes } from '@/lib/theme';
+import { gravarLocal } from '@/lib/dados';
+import { CHAVE_RESPIRO_FEITO } from '@/content/comoFunciona';
 
 /**
  * Respiração diafragmática 4-4-8:
@@ -101,6 +103,7 @@ export default function Respirar() {
   // Fechamento.
   useEffect(() => {
     if (etapa !== 'fim') return;
+    gravarLocal(CHAVE_RESPIRO_FEITO, true).catch(() => {});
     const p = prefsRef.current;
     if (p.sons) tocar('sino', 0.6);
     if (p.voz) setTimeout(() => falar(RESPIRO.fechamento), p.sons ? 1500 : 0);

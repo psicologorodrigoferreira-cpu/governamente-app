@@ -24,6 +24,17 @@ export default function Testes() {
         Retratos do seu momento, com o resultado na hora e guardado só para você. São instrumentos de reflexão, não diagnóstico.
       </Texto>
 
+      {resultados.length === 0 && (
+        <Cartao style={{ borderColor: cores.ambar }}>
+          <Legenda style={{ color: cores.ambarTerra }}>PARA QUE SERVEM OS TESTES</Legenda>
+          <Texto style={{ fontSize: 15, lineHeight: 22 }}>
+            Eles ajudam no primeiro pilar do método, a Consciência: enxergar como você está hoje. Escolha um que tenha a ver com o que mais
+            pesa agora. A maioria leva de 3 a 4 minutos, e o resultado mostra o que você já domina e o que pode desenvolver. Refaça de
+            tempos em tempos para comparar.
+          </Texto>
+        </Cartao>
+      )}
+
       {CATEGORIAS.map((c) => {
         const lista = TESTES.filter((t) => t.categoria === c.id);
         if (lista.length === 0) return null;
