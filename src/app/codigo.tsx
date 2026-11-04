@@ -1,12 +1,19 @@
 import { useState } from 'react';
 import { StyleSheet, Text } from 'react-native';
-import { router } from 'expo-router';
+import { Redirect, router } from 'expo-router';
 import { Botao, Campo, Tela, Texto } from '@/components/ui';
 import { resgatarCodigo } from '@/lib/admin';
+import { CODIGO_DISPONIVEL } from '@/lib/assinatura';
 import { useAuth } from '@/lib/auth';
 import { cores, fontes } from '@/lib/theme';
 
 export default function CodigoTela() {
+  // Nas lojas o resgate não existe (App Store 3.1.1); um link antigo para esta tela volta para a Conta.
+  if (!CODIGO_DISPONIVEL) return <Redirect href="/(tabs)/conta" />;
+  return <Resgate />;
+}
+
+function Resgate() {
   const { atualizarAcesso } = useAuth();
   const [codigo, setCodigo] = useState('');
   const [msg, setMsg] = useState<{ ok: boolean; texto: string } | null>(null);

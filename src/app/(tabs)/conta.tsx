@@ -3,7 +3,7 @@ import { Alert, Linking, Platform, Text } from 'react-native';
 import { router } from 'expo-router';
 import { Botao, Cartao, Legenda, Subtitulo, Tela, Texto, Titulo } from '@/components/ui';
 import { useAuth } from '@/lib/auth';
-import { diasRestantes, linkGerenciarAssinatura, LOJA_DISPONIVEL, restaurarCompras } from '@/lib/assinatura';
+import { CODIGO_DISPONIVEL, diasRestantes, linkGerenciarAssinatura, LOJA_DISPONIVEL, restaurarCompras } from '@/lib/assinatura';
 import { cores, fontes } from '@/lib/theme';
 import { souAdmin } from '@/lib/admin';
 
@@ -93,7 +93,9 @@ export default function Conta() {
       <Cartao>
         <Subtitulo>Preferências</Subtitulo>
         <Botao variante="secundario" titulo="Lembretes" onPress={() => router.push('/lembretes')} />
-        <Botao variante="secundario" titulo="Tenho um código de acesso" onPress={() => router.push('/codigo')} />
+        {CODIGO_DISPONIVEL && (
+          <Botao variante="secundario" titulo="Tenho um código de acesso" onPress={() => router.push('/codigo')} />
+        )}
         <Botao variante="secundario" titulo="Como o método funciona" onPress={() => router.push('/como-funciona?rever=1')} />
         <Botao variante="texto" titulo="Refazer os primeiros passos" onPress={() => router.push('/primeiros-passos')} />
       </Cartao>

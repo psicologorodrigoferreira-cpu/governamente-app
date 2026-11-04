@@ -120,5 +120,15 @@ export function linkGerenciarAssinatura() {
     : 'https://play.google.com/store/account/subscriptions';
 }
 
-/** Página de assinatura no site (checkout Hubla). Preencha com o link da oferta mensal. */
-export const LINK_ASSINAR_SITE = process.env.EXPO_PUBLIC_LINK_HUBLA_APP ?? '';
+/**
+ * Página de assinatura no site (checkout Hubla). Só aparece na versão web:
+ * nas lojas (App Store 3.1.1 e Google Play), conteúdo digital só pode ser liberado pela compra da própria loja.
+ */
+export const LINK_ASSINAR_SITE = Platform.OS === 'web' ? (process.env.EXPO_PUBLIC_LINK_HUBLA_APP ?? '') : '';
+
+/**
+ * Códigos de acesso (combo do livro, cortesia, parcerias) só são resgatados na versão web.
+ * No iPhone e no Android a Apple e o Google não permitem liberar conteúdo por código.
+ * Quem resgata no site entra no app com o mesmo e-mail e já encontra o acesso liberado.
+ */
+export const CODIGO_DISPONIVEL = Platform.OS === 'web';

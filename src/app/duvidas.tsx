@@ -4,6 +4,7 @@ import { Botao, Legenda, LinkApoio, Texto } from '@/components/ui';
 import { VideoYouTube } from '@/components/Video';
 import { Duvida, DUVIDAS, PLAYLIST_FAQ_PADRAO } from '@/content/duvidas';
 import { lerConfiguracoes } from '@/lib/ecossistema';
+import { CODIGO_DISPONIVEL } from '@/lib/assinatura';
 import { cores, espaco, fontes, raio } from '@/lib/theme';
 
 const semAcento = (t: string) =>
@@ -35,8 +36,10 @@ export default function Duvidas() {
 
   const grupos = useMemo(() => {
     const q = semAcento(busca.trim());
-    if (!q) return DUVIDAS;
-    return DUVIDAS.map((g) => ({
+    // Nas lojas não há resgate de código (App Store 3.1.1): o vídeo sobre isso só aparece na web.
+    const base = CODIGO_DISPONIVEL ? DUVIDAS : DUVIDAS.map((g) => ({ ...g, itens: g.itens.filter((d) => d.n !== 40) }));
+    if (!q) return base;
+    return base.map((g) => ({
       ...g,
       itens: g.itens.filter((d) => semAcento(`${d.titulo} ${d.busca ?? ''} ${g.nome}`).includes(q)),
     })).filter((g) => g.itens.length > 0);

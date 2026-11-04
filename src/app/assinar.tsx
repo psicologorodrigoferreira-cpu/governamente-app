@@ -8,6 +8,7 @@ import {
   assinar,
   diasRestantes,
   ehAssinante,
+  CODIGO_DISPONIVEL,
   LINK_ASSINAR_SITE,
   LOJA_DISPONIVEL,
   Plano,
@@ -163,9 +164,9 @@ export default function Assinar() {
       )}
       {!!erro && <Text style={s.erro}>{erro}</Text>}
 
-      <Botao variante="texto" titulo="Tenho um código de acesso" onPress={() => router.push('/codigo')} />
+      {CODIGO_DISPONIVEL && <Botao variante="texto" titulo="Tenho um código de acesso" onPress={() => router.push('/codigo')} />}
       <Botao variante="texto" titulo="Dúvidas sobre o app? Veja os vídeos" onPress={() => router.push('/duvidas')} />
-      <Botao variante="texto" titulo="Já assino ou sou da Mesa / do Plano: verificar acesso" onPress={atualizarAcesso} />
+      <Botao variante="texto" titulo={Platform.OS === 'web' ? 'Já assino ou sou da Mesa / do Plano: verificar acesso' : 'Já tenho acesso: verificar'} onPress={atualizarAcesso} />
       {LOJA_DISPONIVEL && <Botao variante="texto" titulo="Restaurar compras" onPress={restaurar} />}
       {emTeste && <Botao variante="texto" titulo="Continuar no teste grátis" onPress={() => router.replace('/(tabs)')} />}
 
